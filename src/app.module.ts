@@ -5,11 +5,10 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { StudentModule } from './student/student.module';
-import { InstructorModule } from './instructor/instructor.module';
 import { LectureModule } from './lecture/lecture.module';
 import { S3Module } from './s3/s3.module';
 import { FcmModule } from './fcm/fcm.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -26,7 +25,7 @@ import { FcmModule } from './fcm/fcm.module';
       namingStrategy: new SnakeNamingStrategy(),
       timezone: '+09:00'
     }),
-    AuthModule, StudentModule, InstructorModule, LectureModule, S3Module, FcmModule],
+    AuthModule, LectureModule, S3Module, FcmModule, UserModule],
   controllers: [AppController],
   providers: [AppService],
 })
