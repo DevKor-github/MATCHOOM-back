@@ -1,7 +1,8 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dtos/register.dto';
-import { LoginDto } from './dtos/login.dto';
+import { RegisterRequestDto } from './dtos/register.dto';
+import { LoginRequestDto } from './dtos/login.dto';
+import { Docs } from 'src/decorator/docs/auth.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -9,22 +10,26 @@ export class AuthController {
 
 
   @Post('register')
-  async signUp(@Body() registerDto: RegisterDto) {
-    return await this.authService.register(registerDto);
+  @Docs('register')
+  async signUp(@Body() registerRequestDto: RegisterRequestDto) {
+    return await this.authService.register(registerRequestDto);
   }
 
   @Post('login')
-  async login(@Body() loginDto: LoginDto) {
-    return await this.authService.login(loginDto);
+  @Docs('login')
+  async login(@Body() loginRequestDto: LoginRequestDto) {
+    return await this.authService.login(loginRequestDto);
   }
 
   @Post('logout')
+  @Docs('logout')
   async logout(@Res() res: Response) {
     return await this.authService.logout();
   }
 
   @Post('refresh-token')
-  async renewToken(@Body() loginDto: LoginDto) {
+  @Docs('refresh-token')
+  async renewToken(@Body() loginDto: LoginRequestDto) {
     return this.authService.renewToken();
   }
 }

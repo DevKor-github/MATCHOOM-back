@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsDate, IsIn, IsNotEmpty, IsString, Length } from "class-validator";
 
-export class RegisterDto {
+class RegisterRequestDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ example: "이름이지" })
@@ -28,16 +28,32 @@ export class RegisterDto {
   birthday: Date;
 
   @IsString()
-  @ApiProperty({ example: "남성" })
+  @ApiProperty({ example: "male" })
   gender: string;
 
   @IsString()
   @IsNotEmpty()
   @IsIn(['choreography', 'kpop', 'hiphop', 'girls_hiphop', 'girlish', 'waacking', 'hillchoreo', 'b_boy', 'krump', 'popping', 'house', 'street', 'jazz', 'korean_dance', 'modern_dance', 'ballet', 'breaking', 'latin', 'large_group_dance', 'freestyle'])
-  @ApiProperty({ example: "힙합" })
+  @ApiProperty({ example: "kpop" })
   genre: string[];
 
   @IsString()
   @ApiProperty({ example: "서울특별시 성북구 안암로 145" })
   address: string;
 }
+
+class RegisterResponseDto {
+  @ApiProperty({ example: "닉네임이지" })
+  nickname: string;
+
+  @ApiProperty({ example: "xxxx.xxxx.xxxx" })
+  refreshToken: string;
+
+  @ApiProperty({ example: "xxxx.xxxx.xxxx" })
+  accessToken: string;
+
+  @ApiProperty({ example: "1" })
+  id: number;
+}
+
+export { RegisterRequestDto, RegisterResponseDto }
