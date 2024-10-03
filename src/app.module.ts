@@ -22,8 +22,7 @@ import { UserModule } from './user/user.module';
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/entities/**/*.entity{.ts,.js}'],
       synchronize: true,
-      namingStrategy: new SnakeNamingStrategy(),
-      timezone: '+09:00'
+      namingStrategy: new SnakeNamingStrategy()
     }),
     AuthModule, LectureModule, S3Module, FcmModule, UserModule],
   controllers: [AppController],
