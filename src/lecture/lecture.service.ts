@@ -1,16 +1,17 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { AuthService } from 'src/auth/auth.service';
 import { LectureCreateDto } from './dtos/lectureCreate.dto';
 import { LectureApplyDto, LectureReadDto } from './dtos/lectureRead.dto'
 import { Repository } from 'typeorm';
 import { Lecture } from 'src/entities/lecture.entity';
 import { User } from 'src/entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class LectureService {
     constructor(
-        private readonly authService: AuthService,
+        @InjectRepository(Lecture)
         private lectureRepository: Repository<Lecture>,
+        @InjectRepository(User)
         private userRepository: Repository<User>
     ){}
 
