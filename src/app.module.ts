@@ -10,6 +10,7 @@ import { S3Module } from './s3/s3.module';
 import { FcmModule } from './fcm/fcm.module';
 import { UserModule } from './user/user.module';
 import { JwtModule } from '@nestjs/jwt';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { JwtModule } from '@nestjs/jwt';
         secret: process.env.JWT_SECRET,
         signOptions: {expiresIn: process.env.JWT_EXPIRES_IN}
       }),
-    AuthModule, LectureModule, S3Module, FcmModule, UserModule],
+    AuthModule, LectureModule, S3Module, FcmModule, UserModule, SearchModule],
   controllers: [AppController],
   providers: [AppService],
 })
