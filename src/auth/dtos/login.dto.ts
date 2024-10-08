@@ -9,7 +9,6 @@ class LoginRequestDto {
 
   @IsString()
   @IsNotEmpty()
-  @Length(8)
   @ApiProperty({ example: "root00))" })
   password: string;
 }

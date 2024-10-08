@@ -9,6 +9,7 @@ import { LectureModule } from './lecture/lecture.module';
 import { S3Module } from './s3/s3.module';
 import { FcmModule } from './fcm/fcm.module';
 import { UserModule } from './user/user.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -24,6 +25,10 @@ import { UserModule } from './user/user.module';
       synchronize: true,
       namingStrategy: new SnakeNamingStrategy()
     }),
+    JwtModule.register({
+        secret: process.env.JWT_SECRET,
+        signOptions: {expiresIn: process.env.JWT_EXPIRES_IN}
+      }),
     AuthModule, LectureModule, S3Module, FcmModule, UserModule],
   controllers: [AppController],
   providers: [AppService],
