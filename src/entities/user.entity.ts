@@ -1,6 +1,7 @@
 import { Column, PrimaryGeneratedColumn, ManyToMany, Entity, OneToMany, Unique, CreateDateColumn } from 'typeorm';
 import { Follow } from './follow.entity';
 import { Tokens } from './token.entity';
+import { Lecture } from './lecture.entity';
 
 @Entity()
 @Unique(['userId'])
@@ -45,12 +46,6 @@ export class User {
   @ManyToMany(() => Genre, genre => genre.user, { nullable: true })
   genres: Genre[];
 
-  @ManyToMany(() => Lecture, lecture => lecture.user, { nullable: true })
-  learningLectures: Lecture[];
-
-  @ManyToMany(() => Lecture, lecture => lecture.user, { nullable: true })
-  teachingLectures: Lecture[];
-
   @OneToMany(() => Review)
   reviews: Review[];
 
@@ -58,6 +53,12 @@ export class User {
   certification: Certification;
   
   */
+
+  @ManyToMany(() => Lecture, lecture => lecture.user, { nullable: true })
+  learningLectures: Lecture[];
+
+  @ManyToMany(() => Lecture, lecture => lecture.user, { nullable: true })
+  teachingLectures: Lecture[];
 
   @OneToMany(() => Follow, follow => follow.user, { nullable: true })
   follows: Follow[];
