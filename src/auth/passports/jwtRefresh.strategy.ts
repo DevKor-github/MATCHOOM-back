@@ -21,7 +21,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
   }
 
   async validate(req: Request, payload: JwtPayload) {
-    const refreshToken = req.headers.authorization.split('Bearer ')[1];
+    const refreshToken = req.headers.authorization.split(' ')[1];
     if (!refreshToken) throw new UnauthorizedException("유효하지 않은 refresh token 입니다.");
 
     const refreshTokenCheck = await this.tokensRepository.findOne({ where: { refreshToken } });
