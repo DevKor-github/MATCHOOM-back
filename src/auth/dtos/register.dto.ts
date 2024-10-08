@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsIn, IsNotEmpty, IsString, Length } from "class-validator";
+import { IsDateString, IsEnum, IsIn, IsNotEmpty, IsOptional, IsString, Length } from "class-validator";
 
 class RegisterRequestDto {
   @IsString()
@@ -19,30 +19,35 @@ class RegisterRequestDto {
   password: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({ example: "닉네임이지" })
-  nickname: string;
+  nickname?: string;
 
-  @IsDate()
+  @IsDateString()
+  @IsOptional()
   @ApiProperty({ example: "1900-01-01" })
-  birthday: Date;
+  birthday?: string;
 
-  @IsString()
+  @IsEnum(['male', 'female', 'other'])
+  @IsOptional()
   @ApiProperty({ example: "male" })
-  gender: string;
+  gender?: string;
+
+  @IsOptional()
+  @IsIn([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
+  @ApiProperty({ example: [0, 1, 2] })
+  genres?: number[];
 
   @IsString()
-  @IsNotEmpty()
-  @IsIn(['choreography', 'kpop', 'hiphop', 'girls_hiphop', 'girlish', 'waacking', 'hillchoreo', 'b_boy', 'krump', 'popping', 'house', 'street', 'jazz', 'korean_dance', 'modern_dance', 'ballet', 'breaking', 'latin', 'large_group_dance', 'freestyle'])
-  @ApiProperty({ example: "kpop" })
-  genre: string[];
-
-  @IsString()
+  @IsOptional()
   @ApiProperty({ example: "서울특별시 성북구 안암로 145" })
-  address: string;
+  address?: string;
 }
 
 class RegisterResponseDto {
+  @ApiProperty({ example: "1" })
+  id: number;
+
   @ApiProperty({ example: "닉네임이지" })
   nickname: string;
 
@@ -51,9 +56,6 @@ class RegisterResponseDto {
 
   @ApiProperty({ example: "xxxx.xxxx.xxxx" })
   accessToken: string;
-
-  @ApiProperty({ example: "1" })
-  id: number;
 }
 
 export { RegisterRequestDto, RegisterResponseDto }
