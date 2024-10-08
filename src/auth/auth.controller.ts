@@ -36,6 +36,6 @@ export class AuthController {
   @Docs('refresh-token')
   async renewToken(@Req() req: any) {
     const id = req.user.id;
-    return this.authService.renewToken(id);
+    return await this.authService.renewToken(id);
   }
 }

@@ -34,7 +34,7 @@ class RegisterRequestDto {
   gender?: string;
 
   @IsOptional()
-  @IsIn([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
+  @IsIn([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19], { each: true })
   @ApiProperty({ example: [0, 1, 2] })
   genres?: number[];
 

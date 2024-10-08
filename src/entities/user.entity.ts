@@ -42,13 +42,13 @@ export class User {
   createdAt: Date;
 
   /*
-  @ManyToMany(() => Genre)
+  @ManyToMany(() => Genre, genre => genre.user, { nullable: true })
   genres: Genre[];
 
-  @ManyToMany(() => Lecture)
+  @ManyToMany(() => Lecture, lecture => lecture.user, { nullable: true })
   learningLectures: Lecture[];
 
-  @ManyToMany(() => Lecture)
+  @ManyToMany(() => Lecture, lecture => lecture.user, { nullable: true })
   teachingLectures: Lecture[];
 
   @OneToMany(() => Review)
