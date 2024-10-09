@@ -50,11 +50,20 @@ export class SearchService {
   }
 
   async getSearchResult(keyword: string) {
+    const result = [];
+    const lectureFields = ['name', 'description'];
+    const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'registerations', direction: 'DESC' }; 
+    const limit = 10;
+    const offset = 0;
+    const searchLecture = await this.findLectures(lectureFields, 1, orderBy, undefined, limit, offset);
 
+    result.push(searchLecture);
+
+    return result;
   }
 
   async findUserByName(keyword: string) {
-    
+    // join table 생성 후 구현 예정
   }
 
   async findLectureByName(keyword: string) {

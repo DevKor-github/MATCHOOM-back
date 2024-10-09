@@ -37,6 +37,6 @@ export class SearchController {
   @Get(':keyword')
   @Docs('/')
   async getSearchResult(@Param('keyword') keyword: string) {
-
+    return await this.searchService.getSearchResult(keyword);
   }
 }

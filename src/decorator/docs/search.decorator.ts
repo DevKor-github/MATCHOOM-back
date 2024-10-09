@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiBody, ApiCreatedResponse, ApiHeader, ApiOkResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiHeader, ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
 type EndPoints =
   | 'hot'
   | 'upcoming-deadline'
@@ -42,13 +42,13 @@ export function Docs(endPoint: EndPoints) {
     );
     case '/': return applyDecorators(
       ApiOperation({
-        description: "keyword를 파라미터로 받아 강의 검색, 결과 조회.  \nreturn값: []",
+        description: "keyword를 파라미터로 받아 강의 검색, 결과 조회.  \nreturn값: [{ name, description }]",
         summary: "강의 검색"
       }),
-      ApiHeader({
-        description: "header => authorization => bearer 에 access token 주세요",
-        name: 'header',
-        required: true,
+      ApiParam({
+        name: "keyword",
+        type: String,
+        description: "검색어(keyword)를 파라미터로 받음"
       }),
       ApiOkResponse({
         description: "강의 조회 성공"
