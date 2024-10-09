@@ -51,11 +51,7 @@ export class SearchService {
 
   async getSearchResult(keyword: string) {
     const result = [];
-    const lectureFields = ['name', 'description'];
-    const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'registerations', direction: 'DESC' }; 
-    const limit = 10;
-    const offset = 0;
-    const searchLecture = await this.findLectures(lectureFields, 1, orderBy, undefined, limit, offset);
+    const searchLecture = await this.findLectureByName(keyword);
 
     result.push(searchLecture);
 
@@ -97,7 +93,7 @@ export class SearchService {
     if (limit) queryBuilder.take(limit);
     if (offset) queryBuilder.skip(offset);
     if (keyword) {
-      conditions.push('lecture.title LIKE :keyword');
+      conditions.push('lecture.name LIKE :keyword');
       parameters.keyword = `%${keyword}%`;
     }
     if (isCurrent === 0) {
