@@ -20,12 +20,12 @@ export class SearchService {
     */
 
   async getCurationLecture() {
-    
+
   }
 
   async getHotLecture(): Promise<Partial<Lecture>> {
     const fields = ['name', 'description'];
-    const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'enrollments', direction: 'DESC' }; 
+    const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'registerations', direction: 'DESC' }; 
     const limit = 10;
     const offset = 0;
 
@@ -96,7 +96,7 @@ export class SearchService {
       parameters.currentTime = currentTime;
     }
     else if (isCurrent === 1) {
-      conditions.push('lecture.closeTime < :currentTime');
+      conditions.push('lecture.closeTime > :currentTime');
       parameters.currentTime = currentTime;
     }
 

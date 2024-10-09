@@ -11,7 +11,7 @@ export class SearchController {
   
   @Get('curation')
   async getCurationLecture() {
-    
+
   }
 
   @Get('hot')
@@ -28,12 +28,14 @@ export class SearchController {
 
   @Get('recommend')
   @UseGuards(AuthGuard('jwt-access'))
+  @Docs('recommend')
   async getRecommendLecture(@Req() req: any) {
     const userId = req.user.id;
     return await this.searchService.getRecommendLecture(userId);
   }
 
   @Get(':keyword')
+  @Docs('/')
   async getSearchResult(@Param('keyword') keyword: string) {
 
   }
