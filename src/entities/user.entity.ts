@@ -1,7 +1,8 @@
-import { Column, PrimaryGeneratedColumn, ManyToMany, Entity, OneToMany, Unique, CreateDateColumn } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, ManyToMany, Entity, OneToMany, Unique, CreateDateColumn, JoinTable } from 'typeorm';
 import { Follow } from './follow.entity';
 import { Tokens } from './token.entity';
 import { Lecture } from './lecture.entity';
+import { CustomGroup } from './customGroup.entity';
 
 @Entity()
 @Unique(['userId'])
@@ -53,6 +54,9 @@ export class User {
   certification: Certification;
   
   */
+  @ManyToMany(() => CustomGroup, customGroup => customGroup.users, {nullable: true})
+  @JoinTable()
+  customGroup: CustomGroup[];
 
   @ManyToMany(() => Lecture, lecture => lecture.user, { nullable: true })
   learningLectures: Lecture[];

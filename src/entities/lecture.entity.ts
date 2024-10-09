@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
+import { CustomGroup } from "./customGroup.entity";
 
 @Entity()
 export class Lecture{
@@ -56,5 +57,8 @@ export class Lecture{
 
     @ManyToMany(() => User, user => user.teachingLectures)
     instructor: User[];
+
+    @ManyToMany(() => CustomGroup, customGroup => customGroup.lectures)
+    customGroups: CustomGroup[]
 
 }
