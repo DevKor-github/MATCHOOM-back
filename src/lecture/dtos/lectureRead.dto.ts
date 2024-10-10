@@ -2,15 +2,14 @@ import { Transform } from "class-transformer";
 import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 class LectureApplyDto{
-    @IsNotEmpty()
-    @Transform(({value}) => parseInt(value, 10))
     @IsNumber()
+    @IsNotEmpty()
     lectureId: number
 }
 
 class LectureReadDto{
+    @IsNumber()
     @IsNotEmpty()
-    @Transform(({value}) => parseInt(value, 10))
     lectureId: number
 
     @IsNumber()
