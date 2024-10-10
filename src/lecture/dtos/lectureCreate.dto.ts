@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Transform } from "class-transformer"
-import { isDate, IsDate, isDateString, IsDateString, IsNotEmpty, IsNumber, IsString, IsUrl } from "class-validator"
+import { isDate, IsDate, isDateString, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl } from "class-validator"
 
 class LectureCreateDto{
     @IsString()
@@ -42,6 +42,7 @@ class LectureCreateDto{
     closeTime: Date
 
     @IsNumber()
+    @IsOptional()
     @ApiProperty({example: 1})
     difficulty: number
 
@@ -56,6 +57,7 @@ class LectureCreateDto{
     price: number
 
     @IsString()
+    @IsOptional()
     @ApiProperty({example: "설명"})
     description?: string
 

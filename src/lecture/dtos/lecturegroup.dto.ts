@@ -1,4 +1,4 @@
-import { IsArray, IsInt, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 class LectureGroupCreateDto{
     @IsNotEmpty()
@@ -23,11 +23,13 @@ class LectureGroupUpdateDto{
     id: number
     
     @IsString()
-    name: string
+    @IsOptional()
+    name?: string
 
     @IsArray()
     @IsInt({each:true})
-    lectures: number[]
+    @IsOptional()
+    lectures?: number[]
 }
 
 export {LectureGroupCreateDto, LectureGroupDeleteDto, LectureGroupUpdateDto}
