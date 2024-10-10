@@ -6,6 +6,13 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // CORS 설정
+  app.enableCors({
+    origin: '*', 
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+  });
+
   // validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
@@ -15,11 +22,11 @@ async function bootstrap() {
 
   // swagger
   const config = new DocumentBuilder()
-  .setTitle('Swagger Example')
-  .setDescription('Swagger study API description')
-  .setVersion('1.0.0')
-  .addTag('swagger')
-  .build();
+    .setTitle('Swagger Example')
+    .setDescription('Swagger study API description')
+    .setVersion('1.0.0')
+    .addTag('swagger')
+    .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
