@@ -13,21 +13,12 @@ export class SearchService {
     private lectureRepository: Repository<Lecture>
   ) { }
 
-  /*
-  async search(searchDto: SearchDto, userId?: number): Promise<object> {
-    const byUser = this.searchByUser(searchDto)
-    const byLecture = this.searchByLecture(searchDto)
-    const res = { byUser, byLecture }
-    return
-  }
-    */
-
   async getCurationLecture() {
 
   }
 
   async getHotLecture(): Promise<Partial<Lecture>> {
-    const fields = ['name', 'description'];
+    const fields = ['id', 'name', 'description'];
     const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'registerations', direction: 'DESC' }; 
     const limit = 10;
     const offset = 0;
@@ -38,7 +29,7 @@ export class SearchService {
   }
   
   async getUpcomingDeadlineLecture(): Promise<Partial<Lecture>> {
-    const fields = ['name', 'description', 'closeTime'];
+    const fields = ['id', 'name', 'description', 'closeTime'];
     const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'closeTime', direction: 'ASC' }; 
     const limit = 10;
     const offset = 0;
@@ -66,7 +57,7 @@ export class SearchService {
   }
 
   async findLectureByName(keyword: string) {
-    const fields = ['name', 'description'];
+    const fields = ['id', 'name', 'description'];
     const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'registerations', direction: 'DESC' }; 
     const limit = 10;
     const offset = 0;
@@ -114,7 +105,7 @@ export class SearchService {
   }
 
   async findUsers() {
-    
+
   }
 
   //async onSearch(){}
