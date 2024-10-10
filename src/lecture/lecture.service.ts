@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { LectureCreateDto } from './dtos/lectureCreate.dto';
 import { LectureApplyDto, LectureReadDto } from './dtos/lectureRead.dto'
 import { Repository } from 'typeorm';
@@ -7,6 +7,7 @@ import { User } from 'src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LectureGroupCreateDto, LectureGroupDeleteDto, LectureGroupUpdateDto } from './dtos/lecturegroup.dto';
 import { CustomGroup } from 'src/entities/customGroup.entity';
+import { LectureDeleteDto, LectureUpdateDto } from './dtos/lectureUpdate.dto';
 
 @Injectable()
 export class LectureService {
@@ -18,6 +19,39 @@ export class LectureService {
         @InjectRepository(CustomGroup)
         private customGroupRepository: Repository<CustomGroup>
     ){}
+
+    async lectureUpdate(lectureUpdateDto: LectureUpdateDto, userId: number): Promise<object>{
+        const lec = await this.lectureRepository.findOne({where: {id: lectureUpdateDto.lectureId}})
+        if(this.lectureOwnerCheck(lectureUpdateDto.lectureId, userId))throw new ForbiddenException("소유하지 않은 강의")
+
+        const toUpdate = {}
+
+        for(const key in lectureUpdateDto){
+            if(lectureUpdateDto[key] !== undefined && lectureUpdateDto[key] !== null)
+                toUpdate[key] = lectureUpdateDto[key]
+        }
+        try{
+            await this.lectureRepository.update(lec, toUpdate)
+        }catch(err){
+            throw new InternalServerErrorException(err)
+        }
+        return {message: "성공"} 
+    }
+
+    async lectureDelete(lectureDeleteDto: LectureDeleteDto, userId: number): Promise<object>{ 
+        if(this.lectureOwnerCheck(lectureDeleteDto.lectureId, userId))throw new ForbiddenException("소유하지 않은 강의")
+        const lec = await this.lectureRepository.findOne({where:{id: lectureDeleteDto.lectureId}})
+        return this.lectureRepository.delete(lec)
+    }
+
+    async lectureOwnerCheck(lectureId: number, userId: number): Promise<boolean>{
+        const lec = await this.lectureRepository.findOne({
+            where: {id: lectureId},
+            relations: ['instructor']
+        })
+        if(!lec) new NotFoundException("해당하는 강의를 찾을 수 없습니다.")
+        return lec.instructor.some(e => e.id === userId)
+    }
 
     async lectureCreate(lectureCreateDto: LectureCreateDto, userId: number): Promise<object>{
         const {
@@ -51,6 +85,7 @@ export class LectureService {
             music: music || undefined,
             contact
         })
+        //리팩토링 예정
         //if(contact === null) userId => userRepository
         //if(music !== null) this.etcService.getPlaylist(music)
 
@@ -60,12 +95,14 @@ export class LectureService {
     async lectureApply(lectureApplyDto: LectureApplyDto, userId: number): Promise<object>{
         const lec = await this.lectureRepository.findOne({where:{id: lectureApplyDto.lectureId}, relations: ['user']})
         const usr = await this.userRepository.findOne({where: {id: userId}})
-        if(lec.capacity > lec.registerations && 
+        if((lec.capacity > lec.registerations) && 
             lec.user.find((e) => e.id === userId) === undefined
         ){
             lec.registerations++
             lec.user.push(usr)
             await this.lectureRepository.save(lec)
+            usr.learningLectures.push(lec)
+            await this.userRepository.save(usr)
         }
         else throw new ForbiddenException("정원 초과 또는 이미 강의에 포함되어있음")
         return {message: "성공 " + lec.registerations +"/"+ lec.capacity}
@@ -135,7 +172,7 @@ export class LectureService {
     }
     async createUserCustomGroup(lectureGroupCreateDto: LectureGroupCreateDto, userId: number){
         const user = await this.userRepository.findOne({where: {id: userId}})
-        //user가 그 강의를 수강중인지 validation 추가
+        //user가 그 강의를 수강중인지 validation 추가 or 수강중인것만 options?
         const lectures = []
         for(const i of lectureGroupCreateDto.lectures){
             const lec = await this.lectureRepository.findOne({where: {id: i}})
@@ -156,6 +193,11 @@ export class LectureService {
     async updateUserCustomGroup(lectureGroupUpdateDto: LectureGroupUpdateDto, userId: number){
         const group = await this.customGroupRepository.findOne({where: {id: lectureGroupUpdateDto.id}})
         if(!this.groupOwnerCheck(lectureGroupUpdateDto.id, userId)) throw new ForbiddenException("소유하지 않은 그룹입니다.")
+            
+        const lectures = lectureGroupUpdateDto.lectures || undefined
+        const name = lectureGroupUpdateDto.name || undefined
+
+        if(lectures === undefined && name === undefined) return {message: "바뀐게 없습니다"}
         //update
     }
     async deleteUserCustomGroup(lectureGroupDeleteDto: LectureGroupDeleteDto, userId: number){
