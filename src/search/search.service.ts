@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lecture } from 'src/entities/lecture.entity';
+import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class SearchService {
   constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     @InjectRepository(Lecture)
     private lectureRepository: Repository<Lecture>
   ) { }
@@ -53,7 +56,7 @@ export class SearchService {
     const result = [];
     const searchLecture = await this.findLectureByName(keyword);
 
-    result.push(searchLecture);
+    if (searchLecture) result.push(searchLecture);
 
     return result;
   }
@@ -64,7 +67,7 @@ export class SearchService {
 
   async findLectureByName(keyword: string) {
     const fields = ['name', 'description'];
-    const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'name', direction: 'DESC' }; 
+    const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'registerations', direction: 'DESC' }; 
     const limit = 10;
     const offset = 0;
 
@@ -108,6 +111,10 @@ export class SearchService {
     if (conditions) queryBuilder.where(conditions.join(' AND '), parameters);
     
     return await queryBuilder.getMany();
+  }
+
+  async findUsers() {
+    
   }
 
   //async onSearch(){}
