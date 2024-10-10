@@ -14,7 +14,7 @@ export class SearchService {
   ) { }
 
   async getCurationLecture() {
-
+    
   }
 
   async getHotLecture(): Promise<Partial<Lecture>> {
