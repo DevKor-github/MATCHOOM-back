@@ -1,6 +1,7 @@
 import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 import { CustomGroup } from "./customGroup.entity";
+import { Genre } from "./genre.entity";
 
 @Entity()
 export class Lecture {
@@ -52,8 +53,9 @@ export class Lecture {
   @Column()
   contact: string
 
-  //@ManyToMany(() => Genre, genre => genre.lectures)
-  //genres: Genre[]
+  @ManyToMany(() => Genre, genre => genre.lectures, { cascade: true })
+  @JoinTable()
+  genres: Genre[];
 
   @ManyToMany(() => User, user => user.teachingLectures)
   instructor: User[];

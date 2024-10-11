@@ -10,5 +10,5 @@ export class Follow {
   followedAt: Date;
 
   @ManyToMany(() => User, user => user.follows)
-  user: User;
+  users: User[];
 }
