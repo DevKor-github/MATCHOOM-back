@@ -1,7 +1,8 @@
-import { Column, PrimaryGeneratedColumn, ManyToMany, Entity, OneToMany, Unique, CreateDateColumn } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, ManyToMany, Entity, OneToMany, Unique, CreateDateColumn, JoinTable } from 'typeorm';
 import { Follow } from './follow.entity';
 import { Tokens } from './token.entity';
 import { Lecture } from './lecture.entity';
+import { CustomGroup } from './customGroup.entity';
 
 @Entity()
 @Unique(['userId'])
@@ -53,14 +54,19 @@ export class User {
   certification: Certification;
   
   */
+  @ManyToMany(() => CustomGroup, customGroup => customGroup.users, {nullable: true, cascade: true})
+  @JoinTable()
+  customGroups: CustomGroup[];
 
   @ManyToMany(() => Lecture, lecture => lecture.user, { nullable: true })
+  @JoinTable()
   learningLectures: Lecture[];
 
   @ManyToMany(() => Lecture, lecture => lecture.user, { nullable: true })
+  @JoinTable()
   teachingLectures: Lecture[];
 
-  @OneToMany(() => Follow, follow => follow.user, { nullable: true })
+  @ManyToMany(() => Follow, follow => follow.user, { nullable: true, cascade: true })
   follows: Follow[];
 
   @OneToMany(() => Tokens, token => token.user, { nullable: true })
