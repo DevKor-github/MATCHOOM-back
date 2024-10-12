@@ -1,7 +1,9 @@
-import { Column, PrimaryGeneratedColumn, ManyToMany, Entity, OneToMany, Unique, CreateDateColumn } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, ManyToMany, Entity, OneToMany, Unique, CreateDateColumn, JoinTable } from 'typeorm';
 import { Follow } from './follow.entity';
 import { Tokens } from './token.entity';
 import { Lecture } from './lecture.entity';
+import { CustomGroup } from './customGroup.entity';
+import { Genre } from './genre.entity';
 
 @Entity()
 @Unique(['userId'])
@@ -42,10 +44,11 @@ export class User {
   @CreateDateColumn()
   createdAt: Date;
 
-  /*
-  @ManyToMany(() => Genre, genre => genre.user, { nullable: true })
+  @ManyToMany(() => Genre, genre => genre.users, { nullable: true })
+  @JoinTable()
   genres: Genre[];
 
+  /*
   @OneToMany(() => Review)
   reviews: Review[];
 
@@ -54,16 +57,23 @@ export class User {
   
   */
 
+  @ManyToMany(() => CustomGroup, customGroup => customGroup.users, {nullable: true, cascade: true})
+  @JoinTable()
+  customGroups: CustomGroup[];
+
   @ManyToMany(() => Lecture, lecture => lecture.user, { nullable: true })
+  @JoinTable()
   learningLectures: Lecture[];
 
   @ManyToMany(() => Lecture, lecture => lecture.user, { nullable: true })
+  @JoinTable()
   teachingLectures: Lecture[];
 
-  @OneToMany(() => Follow, follow => follow.user, { nullable: true })
+  @ManyToMany(() => Follow, follow => follow.users, { nullable: true, cascade: true })
+  @JoinTable()
   follows: Follow[];
 
-  @OneToMany(() => Tokens, token => token.user, { nullable: true })
+  @OneToMany(() => Tokens, token => token.user, { nullable: true, cascade: true })
   tokens: Tokens[];
 
 }

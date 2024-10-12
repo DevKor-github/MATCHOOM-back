@@ -1,4 +1,4 @@
-import { CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { CreateDateColumn, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 
 @Entity()
@@ -9,6 +9,6 @@ export class Follow {
   @CreateDateColumn()
   followedAt: Date;
 
-  @ManyToOne(() => User, user => user.follows, { onDelete: "CASCADE" })
-  user: User;
+  @ManyToMany(() => User, user => user.follows)
+  users: User[];
 }
