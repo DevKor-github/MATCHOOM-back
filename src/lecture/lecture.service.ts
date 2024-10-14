@@ -1,7 +1,7 @@
 import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { LectureCreateDto } from './dtos/lectureCreate.dto';
 import { LectureApplyDto, LectureReadDto } from './dtos/lectureRead.dto'
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Lecture } from 'src/entities/lecture.entity';
 import { User } from 'src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -76,7 +76,7 @@ export class LectureService {
         toCreate.instructor = [...instructor, usr]
         
         const newLecture = this.lectureRepository.create(toCreate)
-        const savedLecture = this.lectureRepository.save(newLecture)
+        const savedLecture = await this.lectureRepository.save(newLecture)
         
         return {message: "강의 생성 성공", savedLecture}
         //if(contact === null) userId => userRepository
@@ -151,12 +151,14 @@ export class LectureService {
 
     async onUserCustomGroup(userId: number): Promise<object>{
         const usr = await this.userRepository.findOne({where: {id: userId}})
-        const customGroups = usr.customGroup
+        const cg = usr.customGroup
+        const customGroups = cg.sort((a, b) => a.order - b.order)
         const res = customGroups
         .map((e) => ({
             id: e.id,
             name: e.name,
-            lectures: e.lectures
+            lectures: e.lectures,
+            order: e.order
         })
         )
         return res
@@ -170,7 +172,7 @@ export class LectureService {
             if(!lec) throw new NotFoundException("해당하는 강의를 찾을 수 없습니다.")
             lectures.push(lec)  
         }
-        const newgroup = await this.customGroupRepository.create({
+        const newgroup = this.customGroupRepository.create({
             name: lectureGroupCreateDto.name,
             users: [user],
             lectures: lectures
@@ -183,16 +185,22 @@ export class LectureService {
     }
     async updateUserCustomGroup(lectureGroupUpdateDto: LectureGroupUpdateDto, userId: number){
         const group = await this.customGroupRepository.findOne({where: {id: lectureGroupUpdateDto.id}})
+        const usr = await this.userRepository.findOne({where: {id: userId}})
         if(!group) throw new NotFoundException("그룹을 찾을 수 없습니다.")
         if(!this.groupOwnerCheck(lectureGroupUpdateDto.id, userId)) throw new ForbiddenException("소유하지 않은 그룹입니다.")
         if(lectureGroupUpdateDto.name === undefined && lectureGroupUpdateDto.lectures === undefined) return {message: "바뀐게 없습니다"}
 
         if(lectureGroupUpdateDto.name !== undefined) group.name = lectureGroupUpdateDto.name
         if(lectureGroupUpdateDto.lectures !== undefined){ 
-            const foundLectures = await this.lectureRepository.findByIds(lectureGroupUpdateDto.lectures)
+            const foundLectures = await this.lectureRepository.findBy({id: In(lectureGroupUpdateDto.lectures)})
             if(foundLectures.length !== lectureGroupUpdateDto.lectures.length) throw new BadRequestException("일부 강의를 찾을 수 없습니다.")
             group.lectures = foundLectures
         }
+
+        if(lectureGroupUpdateDto.order !== undefined && usr.customGroup.some(e => e.order === lectureGroupUpdateDto.order))
+            throw new BadRequestException("order가 겹칩니다.")
+        else group.order = lectureGroupUpdateDto.order
+
         await this.lectureRepository.save(group)
         return { message: "수정 성공", content: group}
     }
@@ -205,7 +213,7 @@ export class LectureService {
     async userDefaultGroup(userId: number){
         const usr = await this.userRepository.findOne({where:{id: userId}})
         const g1 = await usr.learningLectures 
-        const current = await this.customGroupRepository.create()
+        const current = this.customGroupRepository.create()
     }
 
     async groupOwnerCheck(groupId: number, userId: number): Promise<boolean>{

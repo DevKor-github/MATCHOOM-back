@@ -37,6 +37,10 @@ class LectureGroupUpdateDto{
     @IsOptional()
     @ApiProperty({example: [1,2,3,4,5,6], description: "강의 번호들 Array로"})
     lectures?: number[]
+
+    @IsNumber()
+    @ApiProperty({example: 1, description: "강의 그룹 순서 지정, 0부터"})
+    order?: number
 }
 
 export {LectureGroupCreateDto, LectureGroupDeleteDto, LectureGroupUpdateDto}

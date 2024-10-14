@@ -15,4 +15,7 @@ export class CustomGroup{
 
     @ManyToMany(()=>Lecture, lecture => lecture.customGroups)
     lectures: Lecture[]
+
+    @Column({nullable: true})
+    order: number
 }
