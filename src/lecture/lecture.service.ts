@@ -210,10 +210,11 @@ export class LectureService {
         return await this.customGroupRepository.delete(group)
     }
 
-    async userDefaultGroup(userId: number){
+    async userDefaultGroup(userId: number, type: boolean){
         const usr = await this.userRepository.findOne({where:{id: userId}})
-        const g1 = await usr.learningLectures 
-        const current = this.customGroupRepository.create()
+        const instructing = usr.teachingLectures
+        const learning = usr.learningLectures
+        return type ? instructing : learning
     }
 
     async groupOwnerCheck(groupId: number, userId: number): Promise<boolean>{
