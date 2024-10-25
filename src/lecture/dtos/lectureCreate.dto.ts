@@ -19,9 +19,8 @@ class LectureCreateDto{
     capacity: number
     //입력하지 않았다면 자동으로 -1
 
-    @IsString()
+    @IsDateString()
     @IsNotEmpty()
-    @Transform(({value}) => new Date(value), {toClassOnly: true})
     @ApiProperty({example: "2024-10-07 10:00:00"})
     lectureTime: Date
 
@@ -29,16 +28,14 @@ class LectureCreateDto{
     @ApiProperty({example: 60})
     length: number
 
-    @IsString()
+    @IsDateString()
     @IsNotEmpty()
-    @Transform(({value}) => new Date(value), {toClassOnly: true})
     @ApiProperty({example: "2024-10-07 09:00:00"})
     openTime: Date
 
-    @IsString()
+    @IsDateString()
     @IsNotEmpty()
     @ApiProperty({example: "2024-10-07 10:00:00"})
-    @Transform(({value}) => new Date(value), {toClassOnly: true})
     closeTime: Date
 
     @IsNumber()
