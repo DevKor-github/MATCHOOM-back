@@ -1,12 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Transform } from "class-transformer"
-import { isDate, IsDate, isDateString, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl } from "class-validator"
+import { IsArray, isDate, IsDate, isDateString, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl } from "class-validator"
 
 class LectureCreateDto{
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty({example: "{userId, userId, ... }"})
-    instructorId: string
+    @IsArray()
+    @IsOptional()
+    @ApiProperty({example: "[userId, userId, ... ]"})
+    instructorId?: string[]
     //자신의 아이디는 제외하기 
 
     @IsString()

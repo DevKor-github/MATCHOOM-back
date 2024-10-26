@@ -15,8 +15,8 @@ class LectureUpdateDto{
 
     @IsArray()
     @IsOptional()
-    @ApiProperty({example: "[010-1234-5678, 010-2345-6789]", description: "instructor로 추가하고싶은 사람의 id"})
-    instructors?: string
+    @ApiProperty({example: "['010-1234-5678', '010-2345-6789']", description: "instructor로 추가하고싶은 사람의 userId(전화번호)"})
+    instructors?: string[]
 
     @IsNumber()
     @IsOptional()
@@ -53,10 +53,10 @@ class LectureUpdateDto{
     @ApiProperty({example: "설명"})
     description?: string
 
-    @IsBoolean()
+    @IsString()
     @IsOptional()
     @ApiProperty({example: "https://music.apple.com/kr/playlist/2409-2410/pl.u-2aoq8oaFG1pzGj4"})
-    music?: boolean
+    music?: string
 
     @IsString()
     @IsOptional()
