@@ -21,50 +21,65 @@ export class LectureService {
     ){}
 
     async lectureUpdate(lectureUpdateDto: LectureUpdateDto, userId: number): Promise<object>{
-        const lec = await this.lectureRepository.findOne({where: {id: lectureUpdateDto.lectureId}})
-        if(this.lectureOwnerCheck(lectureUpdateDto.lectureId, userId))throw new ForbiddenException("소유하지 않은 강의")
-
-        const toUpdate = {}
-
-        for(const key in lectureUpdateDto){
-            if(lectureUpdateDto[key] !== undefined && lectureUpdateDto[key] !== null)
-                toUpdate[key] = lectureUpdateDto[key]
-        }
         try{
+            const lec = await this.lectureRepository.findOne({where: {id: lectureUpdateDto.lectureId}})
+            const isOwner = await this.lectureOwnerCheck(lectureUpdateDto.lectureId, userId);
+            if (!isOwner) throw new ForbiddenException("소유하지 않은 강의")
+            const toUpdate = {}
+            for(const key in lectureUpdateDto){
+                if(lectureUpdateDto[key] !== undefined && lectureUpdateDto[key] !== null)
+                toUpdate[key] = lectureUpdateDto[key]
+            }
             await this.lectureRepository.update(lec, toUpdate)
         }catch(err){
             throw new InternalServerErrorException(err)
         }
+
         return {message: "성공"} 
     }
 
-    async lectureDelete(lectureDeleteDto: LectureDeleteDto, userId: number): Promise<object>{ 
-        if(this.lectureOwnerCheck(lectureDeleteDto.lectureId, userId))throw new ForbiddenException("소유하지 않은 강의")
-        const lec = await this.lectureRepository.findOne({where:{id: lectureDeleteDto.lectureId}})
-        return this.lectureRepository.delete(lec)
+    async lectureDelete(lectureDeleteDto: LectureDeleteDto, userId: number): Promise<object> { 
+        const isOwner = await this.lectureOwnerCheck(lectureDeleteDto.lectureId, userId);
+        if (!isOwner) throw new ForbiddenException("소유하지 않은 강의");
+    
+        try {
+            const lec = await this.lectureRepository.findOne({ where: { id: lectureDeleteDto.lectureId } });
+            if (!lec) throw new NotFoundException("해당하는 강의를 찾을 수 없습니다.");
+    
+            const res = await this.lectureRepository.delete(lec.id);
+            return { message: "삭제 성공", detail: res };
+        } catch (err) {
+            throw new InternalServerErrorException(err);
+        }
     }
+    
 
-    async lectureOwnerCheck(lectureId: number, userId: number): Promise<boolean>{
-        const lec = await this.lectureRepository.findOne({
-            where: {id: lectureId},
-            relations: ['instructor']
-        })
-        if(!lec) new NotFoundException("해당하는 강의를 찾을 수 없습니다.")
-        return lec.instructor.some(e => e.id === userId)
+    async lectureOwnerCheck(lectureId: number, userId: number): Promise<boolean> {
+        try {
+            const lec = await this.lectureRepository.findOne({
+                where: { id: lectureId },
+                relations: ['instructor']
+            });
+            if (!lec) throw new NotFoundException("해당하는 강의를 찾을 수 없습니다.");
+    
+            return lec.instructor.some(e => e.id === userId);
+        } catch (err) {
+            throw err;
+        }
     }
 
     async lectureCreate(lectureCreateDto: LectureCreateDto, userId: number): Promise<object>{
         const usr = await this.userRepository.findOne({where: {id: userId}})
         const instructorid = lectureCreateDto.instructorId
-        const instructors = instructorid ? [instructorid] : []
+        const instructors = instructorid ? instructorid : []
 
         const instructor = await Promise.all(
             instructors.map(async(e: string) =>{
                 try{
                     const user = await this.userRepository.findOne({where: {userId: e}})
                     return user ? user : null
-                } catch(e) {
-                    throw new NotFoundException("해당하는 userID의 user를 찾을 수 없습니다.")
+                } catch(err) {
+                    throw new NotFoundException("해당하는 userID의 user를 찾을 수 없습니다.", err)
                 }
             } 
             )
@@ -86,9 +101,9 @@ export class LectureService {
     async lectureApply(lectureApplyDto: LectureApplyDto, userId: number): Promise<object>{
         const lec = await this.lectureRepository.findOne({where:{id: lectureApplyDto.lectureId}, relations: ['user']})
         const usr = await this.userRepository.findOne({where: {id: userId}})
-        if((lec.capacity > lec.registerations) && 
-            lec.user.find((e) => e.id === userId) === undefined
-        ){
+        if((lec.capacity > lec.registerations) 
+        && lec.user.find((e) => e.id === userId) === undefined)
+        {
             lec.registerations++
             lec.user.push(usr)
             await this.lectureRepository.save(lec)
