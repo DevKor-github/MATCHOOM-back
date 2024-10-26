@@ -59,9 +59,11 @@ export class User {
   customGroup: CustomGroup[];
 
   @ManyToMany(() => Lecture, lecture => lecture.user, { nullable: true })
+  @JoinTable()
   learningLectures: Lecture[];
 
   @ManyToMany(() => Lecture, lecture => lecture.user, { nullable: true })
+  @JoinTable()
   teachingLectures: Lecture[];
 
   @OneToMany(() => Follow, follow => follow.user, { nullable: true })
