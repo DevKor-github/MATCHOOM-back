@@ -104,7 +104,7 @@ export class AuthService {
     const user = await this.userRepository.findOne({ where: { id } });
     const token = this.tokensRepository.create({
       user,
-      refreshToken,
+      refreshToken: await hash(refreshToken, 10),
       expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
     });
 
