@@ -8,6 +8,8 @@ import { Tokens } from 'src/entities/token.entity';
 import { Genre } from 'src/entities/genre.entity';
 import { JwtAccessStrategy } from './passports/jwtAccess.strategy';
 import { JwtRefreshStrategy } from './passports/jwtRefresh.strategy';
+import { KakaoStrategy } from './passports/kakao.strategy';
+import { UserService } from 'src/user/user.service';
 
 @Module({
   imports:[
@@ -15,6 +17,6 @@ import { JwtRefreshStrategy } from './passports/jwtRefresh.strategy';
     JwtModule.register({})  
   ] ,
   controllers: [AuthController],
-  providers: [AuthService, JwtAccessStrategy, JwtRefreshStrategy]
+  providers: [AuthService, UserService, JwtAccessStrategy, JwtRefreshStrategy, KakaoStrategy]
 })
 export class AuthModule {}

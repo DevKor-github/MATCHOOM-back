@@ -43,7 +43,7 @@ export class AuthService {
       address: address || null
     });
 
-    if (genres && genres.length > 0) user.genres = await this.genreRepository.findBy({ id: In(genres)}); 
+    if (genres && genres.length > 0) user.genres = await this.genreRepository.findBy({ id: In(genres) }); 
     else user.genres = [];
 
     await this.userRepository.save(user);
@@ -111,5 +111,15 @@ export class AuthService {
     await this.tokensRepository.save(token);
 
     return refreshToken;
+  }
+
+  async generateTokensForSocial(userId: string): Promise<LoginResponseDto> {
+    const user = await this.userRepository.findOne({ where: { userId } });
+    const id = user.id;
+
+    const accessToken = this.generateAccessToken(id);
+    const refreshToken = await this.generateRefreshToken(id);
+
+    return { id, accessToken, refreshToken };
   }
 }
