@@ -108,5 +108,5 @@ export class SearchService {
 
   }
 
-  //async onSearch(){}
+  async onSearch(keyword: string, id: number){} //Logger id
 }

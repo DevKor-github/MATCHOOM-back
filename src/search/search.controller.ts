@@ -2,6 +2,7 @@ import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { SearchService } from './search.service';
 import { Docs } from 'src/decorator/docs/search.decorator';
+import { LoginUserDto } from 'src/auth/dtos/loginuser.dto';
 
 @Controller('search')
 export class SearchController {
@@ -38,5 +39,11 @@ export class SearchController {
   @Docs('/')
   async getSearchResult(@Param('keyword') keyword: string) {
     return await this.searchService.getSearchResult(keyword);
+  }
+
+  @Get('ac')
+  @UseGuards(AuthGuard('jwt-access'))
+  async getAutocomplete(@Param('q') keyword: string, @User() user: LoginUserDto){
+    return await this.searchService.onSearch(keyword, user.id)
   }
 }
