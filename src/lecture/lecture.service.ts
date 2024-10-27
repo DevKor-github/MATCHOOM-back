@@ -21,6 +21,11 @@ export class LectureService {
     ){}
 
     async lectureUpdate(lectureUpdateDto: LectureUpdateDto, userId: number): Promise<object>{
+        let msg: string | undefined
+        if (lectureUpdateDto.minimum > lectureUpdateDto.capacity){
+            lectureUpdateDto.minimum, lectureUpdateDto.capacity = undefined
+            msg = "Minimum must larger than capacity, changed to default value"
+        }
         try{
             const lec = await this.lectureRepository.findOne({where: {id: lectureUpdateDto.lectureId}})
             const isOwner = await this.lectureOwnerCheck(lectureUpdateDto.lectureId, userId);
@@ -35,7 +40,7 @@ export class LectureService {
             throw new InternalServerErrorException(err)
         }
 
-        return {message: "성공"} 
+        return {message: msg || "성공"} 
     }
 
     async lectureDelete(lectureDeleteDto: LectureDeleteDto, userId: number): Promise<object> { 
@@ -72,7 +77,11 @@ export class LectureService {
         const usr = await this.userRepository.findOne({where: {id: userId}})
         const instructorid = lectureCreateDto.instructorId
         const instructors = instructorid ? instructorid : []
-
+        let msg: string | undefined
+        if (lectureCreateDto.minimum > lectureCreateDto.capacity){
+            lectureCreateDto.minimum, lectureCreateDto.capacity = undefined
+            msg = "Minimum must larger than capacity, changed to default value"
+        }
         const instructor = await Promise.all(
             instructors.map(async(e: string) =>{
                 try{
@@ -93,7 +102,7 @@ export class LectureService {
         const newLecture = this.lectureRepository.create(toCreate)
         const savedLecture = await this.lectureRepository.save(newLecture)
         
-        return {message: "강의 생성 성공", savedLecture}
+        return {message: msg || "강의 생성 성공", savedLecture}
         //if(contact === null) userId => userRepository
         //if(music !== null) this.etcService.getPlaylist(music)
     }

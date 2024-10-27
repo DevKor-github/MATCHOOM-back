@@ -10,7 +10,8 @@ type EndPoints =
   | 'customGroup'
   | 'abstract'
   | 'apply'
-  | 'info';
+  | 'info'
+  | '/'
 
 export function Docs(endPoint: EndPoints, method: 'POST' | 'GET' | 'PATCH' | 'DELETE') {
   switch (endPoint) {
@@ -106,5 +107,13 @@ export function Docs(endPoint: EndPoints, method: 'POST' | 'GET' | 'PATCH' | 'DE
         ApiOkResponse({ description: "강의 정보 가져오기 성공" })
       );
       break;
+
+    case '/':
+      if(method == 'GET') return applyDecorators(
+        ApiOperation({
+          description: "첫 화면에 위치할 모든 카드들을 불러옵니다.",
+          summary: "첫 화면 불러오기"
+        })
+      )
   }
 }

@@ -94,6 +94,7 @@ export class LectureController {
 
     @Post('apply')
     @Docs('apply', 'POST')
+    @UseGuards(AuthGuard('jwt-access'))
     async applyToLecture(
         @Body() lectureApplyDto: LectureApplyDto,
         @User() user: LoginUserDto
@@ -107,5 +108,14 @@ export class LectureController {
         @Body() lectureReadDto: LectureReadDto
     ):Promise<object>{
         return await this.lectureService.getLectureInformation(lectureReadDto)
+    }
+
+    @Get()
+    @Docs('/', 'GET')
+    @UseGuards(AuthGuard('jwt-access'))
+    async getInitialScreen(
+        @User() user: LoginUserDto
+    ):Promise<object>{
+        return await this.lectureService.getInitialScreen(user.id)
     }
 }
