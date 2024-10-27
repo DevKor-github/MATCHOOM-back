@@ -3,13 +3,11 @@ import { AuthService } from './auth.service';
 import { RegisterRequestDto } from './dtos/register.dto';
 import { LoginRequestDto } from './dtos/login.dto';
 import { Docs } from 'src/decorator/docs/auth.decorator';
-import { RenewTokenRequestDto } from './dtos/renewToken.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
-
 
   @Post('register')
   @Docs('register')
