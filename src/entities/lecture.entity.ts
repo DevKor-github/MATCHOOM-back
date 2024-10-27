@@ -23,7 +23,10 @@ export class Lecture {
   @Column({ default: false })
   status?: boolean
 
-  @Column({ default: -1 })
+  @Column({ default: 0, nullable: true })
+  minimum: number
+
+  @Column({ default: 1000, nullable: true })
   capacity: number
 
   @Column({ default: 0 })

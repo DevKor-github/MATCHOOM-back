@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { Transform } from "class-transformer"
-import { IsArray, isDate, IsDate, isDateString, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl } from "class-validator"
+import { IsInt, IsArray, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl, Min } from "class-validator"
 
 class LectureCreateDto{
     @IsArray()
@@ -15,9 +14,15 @@ class LectureCreateDto{
     name: string
 
     @IsNumber()
+    @IsOptional()
+    @ApiProperty({example:5, description:"최소인원"})
+    minimum: number
+
+    @IsInt()
+    @Min(1)
+    @IsOptional()
     @ApiProperty({example: 100})
     capacity: number
-    //입력하지 않았다면 자동으로 -1
 
     @IsDateString()
     @IsNotEmpty()
@@ -59,6 +64,7 @@ class LectureCreateDto{
     description?: string
 
     @IsUrl()
+    @IsOptional()
     @ApiProperty({example: "https://music.apple.com/kr/playlist/2409-2410/pl.u-2aoq8oaFG1pzGj4"})
     music?: string
 

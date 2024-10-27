@@ -1,6 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { Transform } from "class-transformer"
-import { IsArray, IsBoolean, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator"
+import { Min, IsInt, IsArray, IsBoolean, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator"
 
 class LectureUpdateDto{
     @IsNumber()
@@ -20,8 +19,14 @@ class LectureUpdateDto{
 
     @IsNumber()
     @IsOptional()
-    @ApiProperty({example: 30})
-    capacity?: number
+    @ApiProperty({example:5, description:"최소인원"})
+    minimum: number
+
+    @IsInt()
+    @Min(1)
+    @IsOptional()
+    @ApiProperty({example: 100})
+    capacity: number
 
     @IsNumber()
     @IsOptional()
