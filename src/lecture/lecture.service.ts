@@ -82,6 +82,15 @@ export class LectureService {
             lectureCreateDto.minimum, lectureCreateDto.capacity = undefined
             msg = "Minimum must larger than capacity, changed to default value"
         }
+        
+        let dates = []
+        if(lectureCreateDto.lecturetype && typeof(lectureCreateDto.lectureTime) === 'string'){
+            dates = this.getJunggiLessonDays(lectureCreateDto.startdate, lectureCreateDto.enddate, lectureCreateDto.yoil, lectureCreateDto.lectureTime)
+        }//정기
+        else dates.push(lectureCreateDto.lectureTime) //원데이
+        
+        const res = []
+        for(const date of dates){
         const instructor = await Promise.all(
             instructors.map(async(e: string) =>{
                 try{
@@ -101,10 +110,34 @@ export class LectureService {
         
         const newLecture = this.lectureRepository.create(toCreate)
         const savedLecture = await this.lectureRepository.save(newLecture)
-        
-        return {message: msg || "강의 생성 성공", savedLecture}
+        res.push(savedLecture)
+    }
+        return {message: msg || "강의 생성 성공", res}
         //if(contact === null) userId => userRepository
         //if(music !== null) this.etcService.getPlaylist(music)
+    }
+
+    getJunggiLessonDays(
+        startDate: Date,
+        endDate: Date,
+        yoil: number[],
+        lectureTime: string
+    ): Date[]{
+        const start = new Date(startDate)
+        const end = new Date(endDate)
+        const [h,m,s] = lectureTime.split(':').map(Number)
+        const res: Date[] = []
+
+        let current = new Date(start.getTime())
+        current.setHours(h, m, s, 0)
+        
+        while(current <= end){
+            if(yoil.includes(current.getDay())) res.push(new Date(current))
+            
+            current.setDate(current.getDate() + 1)
+            current.setHours(h, m, s, 0)
+        }
+        return res
     }
 
     async lectureApply(lectureApplyDto: LectureApplyDto, userId: number): Promise<object>{
@@ -124,11 +157,13 @@ export class LectureService {
     }
 
     async getUserStudOwnLectures(userId: number){
-        return (await this.userRepository.findOne({where:{id: userId}})).learningLectures
+        const user = await this.userRepository.findOne({where:{id: userId}, relations: ['learningLectures']})
+        return user?.learningLectures
     }
 
     async getUserCreateOwnLectures(userId: number){
-        return (await this.userRepository.findOne({where: {id: userId}})).teachingLectures
+        const user = await this.userRepository.findOne({where: {id: userId}, relations: ['teachingLectures']})
+        return user?.teachingLectures
     }
 
     async getInitialScreen(userId: number): Promise<object>{

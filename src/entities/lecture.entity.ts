@@ -20,6 +20,9 @@ export class Lecture {
   @Column()
   closeTime: Date
 
+  @Column({default: false, nullable: true})
+  lecturetype: boolean
+
   @Column({ default: false })
   status?: boolean
 
