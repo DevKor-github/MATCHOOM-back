@@ -20,10 +20,16 @@ export class Lecture {
   @Column()
   closeTime: Date
 
+  @Column({default: false, nullable: true})
+  lecturetype: boolean
+
   @Column({ default: false })
   status?: boolean
 
-  @Column({ default: -1 })
+  @Column({ default: 0, nullable: true })
+  minimum: number
+
+  @Column({ default: 1000, nullable: true })
   capacity: number
 
   @Column({ default: 0 })
@@ -57,11 +63,11 @@ export class Lecture {
   @JoinTable()
   genres: Genre[];
 
+
   @ManyToMany(() => User, user => user.teachingLectures)
   instructor: User[];
 
   @ManyToMany(() => CustomGroup, customGroup => customGroup.lectures)
   @JoinTable()
   customGroups: CustomGroup[]
-
 }
