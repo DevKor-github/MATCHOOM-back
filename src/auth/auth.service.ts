@@ -67,11 +67,13 @@ export class AuthService {
     return { id, accessToken, refreshToken };
   }
 
-  async logout(id: number): Promise<void> {
+  async logout(id: number) {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new UnauthorizedException("존재하지 않는 유저입니다.");
 
     await this.tokensRepository.delete({ user: user });
+
+    return { message: "로그아웃 성공" }
   }
 
   async renewToken(id: number): Promise<RenewTokenResponseDto> {
