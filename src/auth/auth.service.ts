@@ -43,7 +43,7 @@ export class AuthService {
     
     const id = user.id;
 
-    await this.userService.updateUserInfo(id, { nickname, birthday, gender, address, genres } )
+    await this.userService.updateUser(id, { nickname, birthday, gender, address, genres } )
     
     const accessToken = this.generateAccessToken(id);
     const refreshToken = await this.generateRefreshToken(id);

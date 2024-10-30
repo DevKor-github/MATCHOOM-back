@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
@@ -29,7 +29,7 @@ export class UserService {
     return user;
   }
 
-  async updateUserInfo(id: number, updateUserDto: UpdateUserDto) {
+  async updateUser(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.userRepository.findOne({ where: { id }, relations: ['genres'] });
     if (!user) throw new NotFoundException("존재하지 않는 사용자 입니다.");
 
@@ -46,4 +46,11 @@ export class UserService {
     await this.userRepository.save(user);
   }
   
+  async deleteUser(id: number) {
+    const user = this.userRepository.findOne({ where: { id } });
+
+    if (!user) throw new NotFoundException("존재하지 않는 사용자 입니다.");
+
+    await this.userRepository.delete(id);
+  }
 }
