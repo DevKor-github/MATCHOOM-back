@@ -1,14 +1,14 @@
 import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { compare, hash } from 'bcrypt';
 import { RegisterRequestDto, RegisterResponseDto } from './dtos/register.dto';
 import { LoginRequestDto, LoginResponseDto } from './dtos/login.dto';
 import { User } from 'src/entities/user.entity';
 import { RenewTokenResponseDto } from './dtos/renewToken.dto';
 import { Tokens } from 'src/entities/token.entity';
-import { Genre } from 'src/entities/genre.entity';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -17,8 +17,7 @@ export class AuthService {
     private userRepository: Repository<User>,
     @InjectRepository(Tokens)
     private tokensRepository: Repository<Tokens>,
-    @InjectRepository(Genre)
-    private genreRepository: Repository<Genre>,
+    private userService: UserService,
     private jwtService: JwtService,
   ) {}
 
@@ -37,18 +36,15 @@ export class AuthService {
       name,
       userId,
       password: hashedPassword,
-      nickname: nickname || name,
-      birthday: birthday ? new Date(birthday) : null,
-      gender: gender || null,
-      address: address || null
+      nickname: nickname || name
     });
-
-    if (genres && genres.length > 0) user.genres = await this.genreRepository.findBy({ id: In(genres) }); 
-    else user.genres = [];
 
     await this.userRepository.save(user);
     
     const id = user.id;
+
+    await this.userService.updateUserInfo(id, { nickname, birthday, gender, address, genres } )
+    
     const accessToken = this.generateAccessToken(id);
     const refreshToken = await this.generateRefreshToken(id);
 
