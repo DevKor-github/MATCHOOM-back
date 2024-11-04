@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { SearchService } from './search.service';
 import { Docs } from 'src/decorator/docs/search.decorator';
 import { LoginUserDto } from 'src/auth/dtos/loginuser.dto';
+import { User } from 'src/decorator/user.decorator';
 
 @Controller('search')
 export class SearchController {
