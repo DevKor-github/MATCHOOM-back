@@ -203,8 +203,11 @@ export class LectureService {
         const res = await this.lectureRepository.findOne({where: {id: lectureId}})
         return {
             name: res.name,
-            lecturetime: res.lectureTime,
-            length: res.length
+            instructors: res.instructor
+            .map((e) => ([
+                e.nickname
+            ])),
+            lecturetime: res.lectureTime
         }
     }
 
