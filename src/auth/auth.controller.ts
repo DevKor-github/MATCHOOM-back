@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterRequestDto } from './dtos/register.dto';
 import { LoginRequestDto } from './dtos/login.dto';
@@ -31,9 +31,7 @@ export class AuthController {
   @Get('kakao/callback')
   @UseGuards(AuthGuard('kakao'))
   async kakaoLoginCallback(@User() user, @Res() res: any) {
-    const accessToken = this.authService.generateAccessToken(user.id);
-    const refreshToken = await this.authService.generateRefreshToken(user.id);
-    res.json({ accessToken, refreshToken });
+    res.json(await this.authService.generateTokens(user.id));
   }
 
   @Post('logout')

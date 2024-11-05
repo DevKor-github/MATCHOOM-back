@@ -60,11 +60,7 @@ export class AuthService {
     const passwordCheck = await compare(password, user.password);
     if (!passwordCheck) throw new UnauthorizedException("아이디 또는 비밀번호가 틀렸습니다.");
 
-    const id = user.id;
-    const accessToken = this.generateAccessToken(id);
-    const refreshToken = await this.generateRefreshToken(id);
-
-    return { id, accessToken, refreshToken };
+    return await this.generateTokens(user.id);
   }
 
   async logout(id: number) {
@@ -111,10 +107,7 @@ export class AuthService {
     return refreshToken;
   }
 
-  async generateTokensForSocial(userId: string): Promise<LoginResponseDto> {
-    const user = await this.userRepository.findOne({ where: { userId } });
-    const id = user.id;
-
+  async generateTokens(id: number): Promise<LoginResponseDto> {
     const accessToken = this.generateAccessToken(id);
     const refreshToken = await this.generateRefreshToken(id);
 
