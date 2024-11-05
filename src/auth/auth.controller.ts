@@ -4,13 +4,12 @@ import { RegisterRequestDto } from './dtos/register.dto';
 import { LoginRequestDto } from './dtos/login.dto';
 import { Docs } from 'src/decorator/docs/auth.decorator';
 import { AuthGuard } from '@nestjs/passport';
-import { UserService } from 'src/user/user.service';
+import { User } from 'src/decorator/user.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly authService: AuthService,
-    private readonly userService: UserService
+    private readonly authService: AuthService
   ) { }
 
   @Post('register')
@@ -31,24 +30,25 @@ export class AuthController {
 
   @Get('kakao/callback')
   @UseGuards(AuthGuard('kakao'))
-  async kakaoLoginCallback(@Req() req: any, @Res() res: any) {
-    const userId = req.user.userId;
-    res.redirect('/');
+  async kakaoLoginCallback(@User() user, @Res() res: any) {
+    const accessToken = this.authService.generateAccessToken(user.id);
+    const refreshToken = await this.authService.generateRefreshToken(user.id);
+    res.json({ accessToken, refreshToken });
   }
 
   @Post('logout')
   @UseGuards(AuthGuard('jwt-refresh'))
   @Docs('logout')
-  async logout(@Req() req: any) {
-    const id = req.user.id;
+  async logout(@User() user) {
+    const id = user.id;
     return await this.authService.logout(id);
   }
 
   @Post('refresh-token')
   @UseGuards(AuthGuard('jwt-refresh'))
   @Docs('refresh-token')
-  async renewToken(@Req() req: any) {
-    const id = req.user.id;
+  async renewToken(@User() user) {
+    const id = user.id;
     return await this.authService.renewToken(id);
   }
 }
