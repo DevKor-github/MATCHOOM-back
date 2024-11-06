@@ -8,7 +8,8 @@ type EndPoints =
   | 'register'
   | 'login'
   | 'logout'
-  | 'refresh-token';
+  | 'refresh-token'
+  | 'social-login';
 
 export function Docs(endPoint: EndPoints) {
   switch (endPoint) {

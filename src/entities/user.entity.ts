@@ -14,7 +14,7 @@ export class User {
   @Column()
   userId: string;
 
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
   @Column({ type: 'varchar', nullable: true })
