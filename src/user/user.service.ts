@@ -52,5 +52,7 @@ export class UserService {
     if (!user) throw new NotFoundException("존재하지 않는 사용자 입니다.");
 
     await this.userRepository.delete(id);
+
+    return { message: "회원 삭제 성공" }
   }
 }
