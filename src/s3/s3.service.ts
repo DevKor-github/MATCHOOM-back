@@ -13,5 +13,8 @@ export class S3Service {
     private readonly s3Client: S3Client
   ) { }
 
+  async udpateFile(file: Express.Multer.File) {
+
+  }
   
 }

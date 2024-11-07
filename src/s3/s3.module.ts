@@ -4,10 +4,14 @@ import { S3Service } from './s3.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Lecture } from 'src/entities/lecture.entity';
 import { User } from 'src/entities/user.entity';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Lecture])],
+  imports: [
+    TypeOrmModule.forFeature([User, Lecture]),
+    MulterModule.register({})
+  ],
   providers: [
     {
       provide: 'S3_CLIENT',

@@ -11,7 +11,6 @@ import { FcmModule } from './fcm/fcm.module';
 import { UserModule } from './user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { SearchModule } from './search/search.module';
-import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -31,7 +30,7 @@ import { MulterModule } from '@nestjs/platform-express';
         secret: process.env.JWT_SECRET,
         signOptions: {expiresIn: process.env.JWT_EXPIRES_IN}
       }),
-    AuthModule, LectureModule, S3Module, FcmModule, UserModule, SearchModule, MulterModule],
+    AuthModule, LectureModule, S3Module, FcmModule, UserModule, SearchModule],
   controllers: [AppController],
   providers: [AppService],
 })
