@@ -1,6 +1,7 @@
-import { S3Client } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { v4 as uuidv4 } from 'uuid';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 
@@ -13,8 +14,25 @@ export class S3Service {
     private readonly s3Client: S3Client
   ) { }
 
-  async udpateFile(file: Express.Multer.File) {
+  async uploadFile(directory: string, file: Express.Multer.File): Promise<string> {
+    const key = `/${directory}/${uuidv4()}`;
+    await this.s3Client.send(new PutObjectCommand({
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Key: key,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    }));
 
+    return key;
   }
-  
+
+  async deleteFile(key: string) {
+    await this.s3Client.send(new DeleteObjectCommand({
+      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Key: key
+    }));
+
+    return { message: "이미지 삭제 성공" }
+  }
+
 }
