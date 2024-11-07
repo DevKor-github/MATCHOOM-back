@@ -22,10 +22,9 @@ async function bootstrap() {
 
   // swagger
   const config = new DocumentBuilder()
-    .setTitle('Swagger Example')
-    .setDescription('Swagger study API description')
+    .setTitle('MATCHOOM')
+    .setDescription('MATCHOOM API 목록')
     .setVersion('1.0.0')
-    .addTag('swagger')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
