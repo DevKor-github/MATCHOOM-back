@@ -46,7 +46,7 @@ export class UserService {
     else user.genres = [];
 
     if (file) {
-      if (!user.profileImagePath.split('/')[2].startsWith('default')) await this.s3Service.deleteFile(user.profileImagePath);
+      if (!user.profileImagePath.split('/')[2]?.startsWith('default')) await this.s3Service.deleteFile(user.profileImagePath);
       const extension = file.originalname.split('.').pop();
       const profileImagePath = await this.s3Service.uploadFile('user', extension, file);
       user.profileImagePath = profileImagePath;
