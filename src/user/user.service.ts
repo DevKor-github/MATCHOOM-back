@@ -47,7 +47,8 @@ export class UserService {
 
     if (file) {
       if (!user.profileImagePath.split('/')[3].startsWith('default')) await this.s3Service.deleteFile(user.profileImagePath);
-      const profileImagePath = await this.s3Service.uploadFile('user', file);
+      const extension = file.originalname.split('.').pop();
+      const profileImagePath = await this.s3Service.uploadFile('user', extension, file);
       user.profileImagePath = profileImagePath;
     }
 

@@ -13,7 +13,7 @@ export class UserController {
 
   @Patch('/')
   @UseGuards(AuthGuard('jwt-access'))
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 5 * 1024 * 1024 } }))
   async updateUser(@User() user, @Body() updateUserDto: UpdateUserDto, @UploadedFile() file: Express.Multer.File) {
     await this.userService.updateUser(user.id, updateUserDto, file);
   }

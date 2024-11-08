@@ -14,8 +14,8 @@ export class S3Service {
     private readonly s3Client: S3Client
   ) { }
 
-  async uploadFile(directory: string, file: Express.Multer.File): Promise<string> {
-    const key = `images/${directory}/${uuidv4()}`;
+  async uploadFile(directory: string, extension: string, file: Express.Multer.File): Promise<string> {
+    const key = `images/${directory}/${uuidv4()}.${extension}`;
 
     try{
       await this.s3Client.send(new PutObjectCommand({
@@ -38,7 +38,7 @@ export class S3Service {
       Key: key
     }));
 
-    return { message: "이미지 삭제 성공" }
+    return { message: "이미지 삭제 성공" };
   }
 
 }
