@@ -4,6 +4,7 @@ import { In, Repository } from 'typeorm';
 import { User } from 'src/entities/user.entity';
 import { UpdateUserDto } from './dtos/updateUser.dto';
 import { Genre } from 'src/entities/genre.entity';
+import { S3Service } from 'src/s3/s3.service';
 
 @Injectable()
 export class UserService {
@@ -11,7 +12,8 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     @InjectRepository(Genre)
-    private genreRepository: Repository<Genre>
+    private genreRepository: Repository<Genre>,
+    private s3Service: S3Service
   ) {}
 
   async findOrCreateByKakaoId(kakaoId: string, name: string) {
@@ -29,7 +31,7 @@ export class UserService {
     return user;
   }
 
-  async updateUser(id: number, updateUserDto: UpdateUserDto) {
+  async updateUser(id: number, updateUserDto: UpdateUserDto, file?: Express.Multer.File) {
     const user = await this.userRepository.findOne({ where: { id }, relations: ['genres'] });
     if (!user) throw new NotFoundException("존재하지 않는 사용자 입니다.");
 
@@ -43,7 +45,15 @@ export class UserService {
     if (genres && genres.length > 0) user.genres = await this.genreRepository.findBy({ id: In(genres) }); 
     else user.genres = [];
 
+    if (file) {
+      if (!user.profileImagePath.split('/')[3].startsWith('default')) await this.s3Service.deleteFile(user.profileImagePath);
+      const profileImagePath = await this.s3Service.uploadFile('user', file);
+      user.profileImagePath = profileImagePath;
+    }
+
     await this.userRepository.save(user);
+
+    return { message: "유저 정보 수정 성공" };
   }
   
   async deleteUser(id: number) {
@@ -53,6 +63,6 @@ export class UserService {
 
     await this.userRepository.delete(id);
 
-    return { message: "회원 삭제 성공" }
+    return { message: "회원 삭제 성공" };
   }
 }

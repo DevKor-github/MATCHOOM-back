@@ -15,15 +15,21 @@ export class S3Service {
   ) { }
 
   async uploadFile(directory: string, file: Express.Multer.File): Promise<string> {
-    const key = `/${directory}/${uuidv4()}`;
-    await this.s3Client.send(new PutObjectCommand({
-      Bucket: process.env.AWS_S3_BUCKET_NAME,
-      Key: key,
-      Body: file.buffer,
-      ContentType: file.mimetype,
-    }));
+    const key = `images/${directory}/${uuidv4()}`;
 
-    return key;
+    try{
+      await this.s3Client.send(new PutObjectCommand({
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Key: key,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      }));
+  
+      return key;
+
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   async deleteFile(key: string) {
