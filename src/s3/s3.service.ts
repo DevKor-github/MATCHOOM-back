@@ -14,7 +14,8 @@ export class S3Service {
     private readonly s3Client: S3Client
   ) { }
 
-  async uploadFile(directory: string, extension: string, file: Express.Multer.File): Promise<string> {
+  async uploadFile(directory: string, file: Express.Multer.File): Promise<string> {
+    const extension = file.originalname.split('.').pop();
     const key = `images/${directory}/${uuidv4()}.${extension}`;
 
     try{
