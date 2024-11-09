@@ -56,10 +56,6 @@ export class User {
   certification: Certification;
   
   */
-  @ManyToMany(() => CustomGroup, customGroup => customGroup.users, {nullable: true})
-  @JoinTable()
-  customGroup: CustomGroup[];
-
   @ManyToMany(() => CustomGroup, customGroup => customGroup.users, {nullable: true, cascade: true})
   @JoinTable()
   customGroups: CustomGroup[];

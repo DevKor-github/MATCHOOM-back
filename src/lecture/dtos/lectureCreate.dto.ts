@@ -1,7 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { Transform } from "class-transformer"
 import { IsInt, IsArray, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl, Min, IsBoolean, IsIn } from "class-validator"
-import { RequireBothDates } from "src/decorator/date.decorator"
 
 class LectureCreateDto{
     @IsArray()
@@ -31,17 +29,6 @@ class LectureCreateDto{
     @ApiProperty({example: 100})
     capacity: number
 
-    @IsDateString()
-    @IsOptional()
-    @RequireBothDates()
-    @ApiProperty({example: "2024-09-01"})
-    startdate?: Date
-
-    @IsDateString()
-    @IsOptional()
-    @ApiProperty({example: "2024-09-01"})
-    enddate?: Date
-
     @IsArray()
     @IsIn([0,1,2,3,4,6], {each: true})
     @IsOptional()
@@ -49,17 +36,8 @@ class LectureCreateDto{
 
     @IsDateString()
     @IsNotEmpty()
-    @Transform(({value}) => {
-        if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(value)) {
-            return new Date(value.replace(' ', 'T')); // "YYYY-MM-DD HH:mm:ss" -> "YYYY-MM-DDTHH:mm:ss"
-        }
-        else if (/^\d{2}:\d{2}:\d{2}$/.test(value)) {
-            return value;
-        }
-        throw new Error('lectureTime 형식이 잘못되었습니다.');
-    })
-    @ApiProperty({example: "'2024-10-07 10:00:00' | (원데이) 또는 '10:00:00' (정기)"})
-    lectureTime: Date | string
+    @ApiProperty({example: "'2024-10-07 10:00:00' | (원데이) 또는 ['2024-10-07 10:00:00', '2024-10-22 10:00:00'] | 여러개"})
+    lectureTime: Date | Date[]
 
     @IsNumber()
     @ApiProperty({example: 60})

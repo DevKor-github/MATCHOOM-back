@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 import { CustomGroup } from "./customGroup.entity";
 import { Genre } from "./genre.entity";
@@ -19,9 +19,6 @@ export class Lecture {
 
   @Column()
   closeTime: Date
-
-  @Column({default: false, nullable: true})
-  lecturetype: boolean
 
   @Column({ default: false })
   status?: boolean
@@ -62,7 +59,6 @@ export class Lecture {
   @ManyToMany(() => Genre, genre => genre.lectures, { cascade: true })
   @JoinTable()
   genres: Genre[];
-
 
   @ManyToMany(() => User, user => user.teachingLectures)
   instructor: User[];
