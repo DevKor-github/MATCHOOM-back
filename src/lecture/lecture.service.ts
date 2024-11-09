@@ -79,15 +79,16 @@ export class LectureService {
         const instructors = instructorid ? instructorid : []
         let msg: string | undefined
         if (lectureCreateDto.minimum > lectureCreateDto.capacity){
-            lectureCreateDto.minimum, lectureCreateDto.capacity = undefined
+            lectureCreateDto.minimum, lectureCreateDto.capacity = undefined, undefined
             msg = "Minimum must larger than capacity, changed to default value"
         }
         
-        let dates = []
-        if(lectureCreateDto.lecturetype && typeof(lectureCreateDto.lectureTime) === 'string'){
-            dates = this.getJunggiLessonDays(lectureCreateDto.startdate, lectureCreateDto.enddate, lectureCreateDto.yoil, lectureCreateDto.lectureTime)
-        }//정기
-        else dates.push(lectureCreateDto.lectureTime) //원데이
+        let dates: Date[] = []
+        if (Array.isArray(lectureCreateDto.lectureTime)) {
+            dates = lectureCreateDto.lectureTime
+        } else if (lectureCreateDto.lectureTime) {
+            dates.push(lectureCreateDto.lectureTime)
+        }
         
         const res = []
         for(const date of dates){
@@ -107,16 +108,14 @@ export class LectureService {
             if (lectureCreateDto[key] !== undefined && lectureCreateDto[key] !== null) toCreate[key] = lectureCreateDto[key]
         }
         toCreate.instructor = [...instructor, usr]
-        
+        toCreate.lectureTime = date
         const newLecture = this.lectureRepository.create(toCreate)
         const savedLecture = await this.lectureRepository.save(newLecture)
         res.push(savedLecture)
     }
-        return {message: msg || "강의 생성 성공", res}
-        //if(contact === null) userId => userRepository
-        //if(music !== null) this.etcService.getPlaylist(music)
+        return {message: msg || "강의 생성 성공", result: res}
     }
-
+    /*
     getJunggiLessonDays(
         startDate: Date,
         endDate: Date,
@@ -138,12 +137,13 @@ export class LectureService {
             current.setHours(h, m, s, 0)
         }
         return res
-    }
+    }*/
 
     async lectureApply(lectureApplyDto: LectureApplyDto, userId: number): Promise<object>{
         const lec = await this.lectureRepository.findOne({where:{id: lectureApplyDto.lectureId}, relations: ['user']})
         const usr = await this.userRepository.findOne({where: {id: userId}})
-        if((lec.capacity > lec.registerations) 
+        if(lec.capacity !== undefined,
+        (lec.capacity > lec.registerations) 
         && lec.user.find((e) => e.id === userId) === undefined)
         {
             lec.registerations++
@@ -204,16 +204,16 @@ export class LectureService {
         return {
             name: res.name,
             instructors: res.instructor
-            .map((e) => ([
-                e.nickname
-            ])),
-            lecturetime: res.lectureTime
+            .map((e) => e.nickname),
+            lecturetime: res.lectureTime,
+            length: res.length
+
         }
     }
 
     async onUserCustomGroup(userId: number): Promise<object>{
         const usr = await this.userRepository.findOne({where: {id: userId}})
-        const cg = usr.customGroup
+        const cg = usr.customGroups
         const customGroups = cg.sort((a, b) => a.order - b.order)
         const res = customGroups
         .map((e) => ({
@@ -240,7 +240,7 @@ export class LectureService {
             lectures: lectures
         })
 
-        user.customGroup.push(newgroup)
+        user.customGroups.push(newgroup)
         await this.userRepository.save(user)
 
         return this.customGroupRepository.save(newgroup)
@@ -259,7 +259,7 @@ export class LectureService {
             group.lectures = foundLectures
         }
 
-        if(lectureGroupUpdateDto.order !== undefined && usr.customGroup.some(e => e.order === lectureGroupUpdateDto.order))
+        if(lectureGroupUpdateDto.order !== undefined && usr.customGroups.some(e => e.order === lectureGroupUpdateDto.order))
             throw new BadRequestException("order가 겹칩니다.")
         else group.order = lectureGroupUpdateDto.order
 

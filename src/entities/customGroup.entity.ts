@@ -10,7 +10,7 @@ export class CustomGroup{
     @Column()
     name: string
 
-    @ManyToMany(()=> User, user => user.customGroup)
+    @ManyToMany(()=> User, user => user.customGroups)
     users: User[]
 
     @ManyToMany(()=>Lecture, lecture => lecture.customGroups)
