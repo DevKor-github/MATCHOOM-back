@@ -207,6 +207,7 @@ export class LectureService {
             .map((e) => e.nickname),
             lecturetime: res.lectureTime,
             length: res.length
+
         }
     }
 

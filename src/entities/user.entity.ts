@@ -14,7 +14,7 @@ export class User {
   @Column()
   userId: string;
 
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
   @Column({ type: 'varchar', nullable: true })
@@ -43,6 +43,9 @@ export class User {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column({ nullable: true, default: '/images/user/default_user_img.png' })
+  profileImagePath: string;
 
   @ManyToMany(() => Genre, genre => genre.users, { nullable: true })
   @JoinTable()
