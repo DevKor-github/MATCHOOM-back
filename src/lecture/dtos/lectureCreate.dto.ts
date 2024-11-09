@@ -20,6 +20,7 @@ class LectureCreateDto{
 
     @IsNumber()
     @IsOptional()
+    @Min(0)
     @ApiProperty({example:5, description:"최소인원"})
     minimum: number
 
@@ -29,17 +30,13 @@ class LectureCreateDto{
     @ApiProperty({example: 100})
     capacity: number
 
-    @IsArray()
-    @IsIn([0,1,2,3,4,6], {each: true})
-    @IsOptional()
-    yoil?: number[]
-
     @IsDateString()
     @IsNotEmpty()
     @ApiProperty({example: "'2024-10-07 10:00:00' | (원데이) 또는 ['2024-10-07 10:00:00', '2024-10-22 10:00:00'] | 여러개"})
     lectureTime: Date | Date[]
 
     @IsNumber()
+    @Min(0)    
     @ApiProperty({example: 60})
     length: number
 
@@ -64,6 +61,7 @@ class LectureCreateDto{
     location: string
 
     @IsNumber()
+    @Min(0)
     @IsNotEmpty()
     @ApiProperty({example: 30000})
     price: number
