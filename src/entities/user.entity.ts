@@ -44,6 +44,9 @@ export class User {
   @CreateDateColumn()
   createdAt: Date;
 
+  @Column({ nullable: true, default: '/images/user/default_user_img.png' })
+  profileImagePath: string;
+
   @ManyToMany(() => Genre, genre => genre.users, { nullable: true })
   @JoinTable()
   genres: Genre[];
