@@ -6,6 +6,7 @@ import { UpdateUserDto } from './dtos/updateUser.dto';
 import { Genre } from 'src/entities/genre.entity';
 import { S3Service } from 'src/s3/s3.service';
 import { GetPrivateUserDto, GetUserDto } from './dtos/getUser.dto';
+import { CustomGroup } from 'src/entities/customGroup.entity';
 
 @Injectable()
 export class UserService {
@@ -14,6 +15,8 @@ export class UserService {
     private userRepository: Repository<User>,
     @InjectRepository(Genre)
     private genreRepository: Repository<Genre>,
+    @InjectRepository(CustomGroup)
+    private customGroupRepository: Repository<CustomGroup>,
     private s3Service: S3Service
   ) {}
 
@@ -78,5 +81,10 @@ export class UserService {
     if (!user) throw new NotFoundException("존재하지 않는 사용자 입니다.");
 
     return new GetPrivateUserDto(user);
+  }
+
+  async getUserCustomGroups(id: number) {
+    const customGroups = await this.customGroupRepository.findOne({  });
+    
   }
 }

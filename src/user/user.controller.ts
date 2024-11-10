@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/decorator/user.decorator';
@@ -23,7 +23,7 @@ export class UserController {
     @User() user, @Body() updateUserDto: UpdateUserDto,
     @UploadedFile(new FileValidationPipe(['image/jpg', 'image/jpeg', 'image/png'])) file: Express.Multer.File
   ) {
-    await this.userService.updateUser(user.id, updateUserDto, file);
+    return await this.userService.updateUser(user.id, updateUserDto, file);
   }
 
   @Delete('/')
@@ -33,21 +33,24 @@ export class UserController {
     return await this.userService.deleteUser(user.id);
   }
 
-  @Get('/myInfo')
+  @Get('/my-info')
   @UseGuards(AuthGuard('jwt-access'))
+  @Docs('getMyInfo')
   async getMyInfo(@User() user) {
     return await this.userService.getMyInfo(user.id);
   }
 
   @Get('/:id')
+  @Docs('getUserInfo')
   async getUserInfo(@Param('id') id: number) {
     return await this.userService.getUserInfo(id);
   }
 
   @Post('/follow')
   @UseGuards(AuthGuard('jwt-access'))
+  @Docs('follow')
   async setFollowStatus(@User() user, @Body() followUserDto: any) {
-
+    return ;
   }
   
 }

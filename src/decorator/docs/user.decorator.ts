@@ -1,11 +1,13 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiHeader, ApiOkResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { UpdateUserDto } from 'src/user/dtos/updateUser.dto';
+import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiHeader, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { GetUserDto } from 'src/user/dtos/getUser.dto';
 
 type EndPoints =
   | 'update'
   | 'delete'
-  | 'get'
+  | 'getUserInfo'
+  | 'getMyInfo'
+  | 'follow'
 
 export function Docs(endPoint: EndPoints) {
   switch (endPoint) {
@@ -42,20 +44,67 @@ export function Docs(endPoint: EndPoints) {
     );
     case 'delete': return applyDecorators(
       ApiOperation({
-        description: "refresh token을 헤더로 받아 access token을 갱신.  \nreturn 값: accessToken",
-        summary: "유저 삭제"
+        description: "회원 탈퇴",
+        summary: "회원 탈퇴"
       }),
       ApiHeader({
         description: 'header => authorization => bearer 에 access token 주세요',
         name: 'header',
         required: true,
       }),
-      ApiCreatedResponse({
-        description: "토큰 갱신 성공"
+      ApiOkResponse({
+        description: "회원 탈퇴 성공"
       }),
       ApiUnauthorizedResponse({
-        description: "토큰 갱신 실패"
+        description: "회원 탈퇴 실패"
       })
+    );
+    case 'getUserInfo': return applyDecorators(
+      ApiOperation({
+        description: "parameter: 조회 대상 유저 id.  \nreturn값 nickname, description, profileImagePath",
+        summary: "유저 정보 조회(타인 프로필 조회)"
+      }),
+      ApiParam({
+        name: "id",
+        type: Number,
+        description: "유저 id(고유 id)를 파라미터로 받음"
+      }),
+      ApiOkResponse({
+        description: "유저 조회 성공",
+        type: GetUserDto
+      }),
+      ApiNotFoundResponse({
+        description: "유저 조회 실패"
+      })
+    );
+    case 'getMyInfo': return applyDecorators(
+      ApiOperation({
+        description: "parameter: 조회 대상 유저 id.  \nreturn값 userId(전화번호), name, nickname, birthday, gender, genre, address, description, profileImagePath",
+        summary: "유저 정보 조회(타인 프로필 조회)"
+      }),
+      ApiHeader({
+        description: 'header => authorization => bearer 에 access token 주세요',
+        name: 'header',
+        required: true,
+      }),
+      ApiParam({
+        name: "id",
+        type: Number,
+        description: "유저 id(고유 id)를 파라미터로 받음"
+      }),
+      ApiOkResponse({
+        description: "유저 조회 성공",
+        type: GetUserDto
+      }),
+      ApiNotFoundResponse({
+        description: "유저 조회 실패"
+      })
+    );
+    case 'follow': return applyDecorators(
+      ApiOperation({
+        description: "parameter: 조회 대상 유저 id.  \nreturn값 userId(전화번호), name, nickname, birthday, gender, genre, address, description, profileImagePath",
+        summary: "유저 정보 조회(타인 프로필 조회)"
+      }),
     );
   }
 }
