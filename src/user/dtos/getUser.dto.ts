@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from 'src/entities/user.entity';
 
-class FindUserDto {
+class GetUserDto {
   constructor(user: User) {
     this.nickname = user.nickname;
     this.description = user.description;
@@ -18,7 +18,7 @@ class FindUserDto {
   profileImagePath?: string;
 }
 
-class FindPrivateUserDto extends FindUserDto {
+class GetPrivateUserDto extends GetUserDto {
   constructor(user: User) {
     super(user);
     this.userId = user.userId;
@@ -26,7 +26,9 @@ class FindPrivateUserDto extends FindUserDto {
     this.birthday = user.birthday;
     this.description = user.description;
     this.profileImagePath = user.profileImagePath;
+    this.genres = user.genres.map((genre) => genre.id);
   }
+  
   @ApiProperty({ example: "0100000000" })
   userId: string;
 
@@ -46,4 +48,4 @@ class FindPrivateUserDto extends FindUserDto {
   genres?: number[];
 }
 
-export { FindUserDto, FindPrivateUserDto }
+export { GetUserDto, GetPrivateUserDto }

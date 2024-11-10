@@ -36,12 +36,12 @@ export class UserController {
   @Get('/myInfo')
   @UseGuards(AuthGuard('jwt-access'))
   async getMyInfo(@User() user) {
-    return await this.userService.findUser(user.id);
+    return await this.userService.getMyInfo(user.id);
   }
 
   @Get('/:id')
   async getUserInfo(@Param('id') id: number) {
-    return await this.userService.findUser(id);
+    return await this.userService.getUserInfo(id);
   }
 
   @Post('/follow')

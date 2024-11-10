@@ -5,6 +5,7 @@ import { User } from 'src/entities/user.entity';
 import { UpdateUserDto } from './dtos/updateUser.dto';
 import { Genre } from 'src/entities/genre.entity';
 import { S3Service } from 'src/s3/s3.service';
+import { GetPrivateUserDto, GetUserDto } from './dtos/getUser.dto';
 
 @Injectable()
 export class UserService {
@@ -16,7 +17,7 @@ export class UserService {
     private s3Service: S3Service
   ) {}
 
-  async findOrCreateByKakaoId(kakaoId: string, name: string) {
+  async findOrCreateByKakaoId(kakaoId: string, name: string): Promise<User> {
     let user = await this.userRepository.findOne({ where: { userId: kakaoId } });
 
     if (!user) {
@@ -65,11 +66,17 @@ export class UserService {
     return { message: "회원 삭제 성공" };
   }
 
-  async findUser(id: number) {
-    const user = this.userRepository.findOne({ where: { id }, relations: ['teachingLectures'] });
+  async getUserInfo(id: number) {
+    const user = await this.userRepository.findOne({ where: { id }, relations: ['teachingLectures'] });
     if (!user) throw new NotFoundException("존재하지 않는 사용자 입니다.");
 
-    
+    return new GetUserDto(user);
+  }
 
+  async getMyInfo(id: number) {
+    const user = await this.userRepository.findOne({ where: { id }, relations: ['teachingLectures'] });
+    if (!user) throw new NotFoundException("존재하지 않는 사용자 입니다.");
+
+    return new GetPrivateUserDto(user);
   }
 }
