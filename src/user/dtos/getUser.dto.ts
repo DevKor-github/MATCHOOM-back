@@ -26,7 +26,7 @@ class GetPrivateUserDto extends GetUserDto {
     this.birthday = user.birthday;
     this.description = user.description;
     this.profileImagePath = user.profileImagePath;
-    this.genres = user.genres.map((genre) => genre.id);
+    this.genres = (user.genres || []).map((genre) => genre.id);
   }
   
   @ApiProperty({ example: "0100000000" })
