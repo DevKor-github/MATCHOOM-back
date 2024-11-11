@@ -85,8 +85,8 @@ export function Docs(endPoint: EndPoints) {
     );
     case 'getMyInfo': return applyDecorators(
       ApiOperation({
-        description: "parameter: 조회 대상 유저 id.  \nreturn값 userId(전화번호), name, nickname, birthday, gender, genre, address, description, profileImagePath",
-        summary: "유저 정보 조회(타인 프로필 조회)"
+        description: "header에 access token 주세요 \nreturn값 userId(전화번호), name, nickname, birthday, gender, genre, address, description, profileImagePath",
+        summary: "유저 정보 조회(본인 프로필 조회)"
       }),
       ApiHeader({
         description: 'header => authorization => bearer 에 access token 주세요',
