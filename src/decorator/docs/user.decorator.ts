@@ -1,6 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiBody, ApiConsumes, ApiCreatedResponse, ApiHeader, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiHeader, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiUnauthorizedResponse, getSchemaPath } from '@nestjs/swagger';
 import { GetUserDto } from 'src/user/dtos/getUser.dto';
+import { UpdateUserDto } from 'src/user/dtos/updateUser.dto';
 
 type EndPoints =
   | 'update'
@@ -29,10 +30,15 @@ export function Docs(endPoint: EndPoints) {
             file: {
               type: 'string',
               format: 'binary',
-              description: '프로필 이미지. .jpg, .jpeg, .png 형식만 지원. 크기는 5mb 이하'
+              description: '프로필 이미지 파일.  \npng, jpg, jpeg 형식만 지원합니다.  \n크기는 5mb 미만'
             },
-          }
-        }
+            nickname: { type: 'string', description: '닉네임', example: '닉네임' },
+            birthday: { type: 'string', description: '생년월일', example: '1900-01-01' },
+            gender: { type: 'string', description: '성별', example: 'male,female,other' },
+            address: { type: 'string', description: '주소', example: '서울특별시 성북구 안암로 145' },
+            genres: { type: 'array', items: { type: 'integer' }, description: "각 장르에 해당하는 id값을 넘겨주세요", example: [0, 1, 2]  }
+          },
+        },
       }),
       ApiConsumes('multipart/form-data'),
       ApiOkResponse({
@@ -102,8 +108,8 @@ export function Docs(endPoint: EndPoints) {
     );
     case 'follow': return applyDecorators(
       ApiOperation({
-        description: "parameter: 조회 대상 유저 id.  \nreturn값 userId(전화번호), name, nickname, birthday, gender, genre, address, description, profileImagePath",
-        summary: "유저 정보 조회(타인 프로필 조회)"
+        description: "팔로우/언팔로우.  \n언팔로우 상태일 시 팔로우, 팔로우 상태일 시 언팔로우.",
+        summary: "팔로우/언팔로우"
       }),
     );
   }
