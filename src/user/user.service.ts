@@ -61,7 +61,7 @@ export class UserService {
   }
   
   async deleteUser(id: number) {
-    const user = this.userRepository.findOne({ where: { id } });
+    const user = this.userRepository.findOne({ where: { id }, relations: ['tokens'] });
     if (!user) throw new NotFoundException("존재하지 않는 사용자 입니다.");
 
     await this.userRepository.delete(id);
