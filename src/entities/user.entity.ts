@@ -67,7 +67,7 @@ export class User {
   @JoinTable()
   learningLectures: Lecture[];
 
-  @ManyToMany(() => Lecture, lecture => lecture.user, { nullable: true })
+  @ManyToMany(() => Lecture, lecture => lecture.instructor, { nullable: true })
   @JoinTable()
   teachingLectures: Lecture[];
 
