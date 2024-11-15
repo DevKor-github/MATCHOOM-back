@@ -39,6 +39,7 @@ export class SearchController {
   }
 
   @Get('get-all')
+  @Docs('get-all')
   async findAll() {
     return await this.searchService.findAll();
   }

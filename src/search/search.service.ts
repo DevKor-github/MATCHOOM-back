@@ -43,8 +43,8 @@ export class SearchService {
 
   async getSearchResult(keyword: string) {
     const res = []
-    const onSearchLecture = await this.findLectures(['name', 'description', 'capacity', 'id', 'registerations'], null, null, keyword, 10, 0)
-    const onSearchUser = await this.findUsers(['nickname', 'description'], null, keyword, 10, 0)
+    const onSearchLecture = await this.findLectures(['id', 'name', 'description'], null, null, keyword, undefined, undefined)
+    const onSearchUser = await this.findUsers(['nickname', 'description'], null, keyword, undefined, undefined)
     res.push(
       ...onSearchLecture.map(lec => ({type: 'lecture', 
         data: {
