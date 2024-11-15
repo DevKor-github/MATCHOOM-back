@@ -26,7 +26,7 @@ export class UserController {
     return await this.userService.updateUser(user.id, updateUserDto, file);
   }
 
-  @Delete('/')
+  @Delete('/delete')
   @UseGuards(AuthGuard('jwt-access'))
   @Docs('delete')
   async deleteUser(@User() user) {
@@ -46,11 +46,12 @@ export class UserController {
     return await this.userService.getUserInfo(id);
   }
 
+  /*
   @Post('/follow')
   @UseGuards(AuthGuard('jwt-access'))
   @Docs('follow')
   async setFollowStatus(@User() user, @Body() followUserDto: any) {
     return ;
   }
-  
+  */
 }
