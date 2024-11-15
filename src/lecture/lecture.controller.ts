@@ -84,10 +84,10 @@ export class LectureController {
         return await this.lectureService.updateUserCustomGroup(lectureGroupDeleteDto, user.id)
     }
 
-    @Get('abstract')
+    @Get('abstract/:id')
     @Docs('abstract', 'GET')
     async getLectureAbstract(
-        @Body('id') lectureId: number
+        @Param('id') lectureId: number
     ):Promise<object>{
         return await this.lectureService.getLectureAbstract(lectureId)
     }
@@ -105,7 +105,7 @@ export class LectureController {
     @Get('info')
     @Docs('info', 'GET')
     async getLectureInfo(
-        @Body() lectureReadDto: LectureReadDto
+        @Param() lectureReadDto: LectureReadDto
     ):Promise<object>{
         return await this.lectureService.getLectureInformation(lectureReadDto)
     }
