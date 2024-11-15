@@ -23,6 +23,7 @@ export class SearchController {
     return await this.searchService.getUpcomingDeadlineLecture();
   }
 
+  /*
   @Get('recommend')
   @UseGuards(AuthGuard('jwt-access'))
   @Docs('recommend')
@@ -30,6 +31,7 @@ export class SearchController {
     const userId = req.user.id;
     return await this.searchService.getRecommendLecture(userId);
   }
+  */
 
   @Get('')
   @Docs('/')
