@@ -28,10 +28,12 @@ export class AuthController {
 
   @Get('kakao')
   @UseGuards(AuthGuard('kakao'))
+  @Docs('kakao')
   async kakaoLogin() { }
 
   @Get('kakao/callback')
   @UseGuards(AuthGuard('kakao'))
+  @Docs('kakao/callback')
   async kakaoLoginCallback(@User() user) {
      return await this.authService.generateTokens(user.id);
   }
