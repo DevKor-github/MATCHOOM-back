@@ -13,9 +13,7 @@ export class SearchService {
     private lectureRepository: Repository<Lecture>
   ) { }
 
-  async getCurationLecture() {
-    
-  }
+  async getCurationLecture() {}
 
   async getHotLecture(): Promise<Partial<Lecture>> {
     const fields = ['id', 'name', 'description'];
@@ -44,16 +42,28 @@ export class SearchService {
   }
 
   async getSearchResult(keyword: string) {
-    const result = [];
-    const searchLecture = await this.findLectureByName(keyword);
+    const res = []
+    const onSearchLecture = await this.findLectures(['name', 'description', 'capacity', 'id', 'registerations'], null, null, keyword, 10, 0)
+    const onSearchUser = await this.findUsers(['nickname', 'description'], null, keyword, 10, 0)
+    res.push(
+      ...onSearchLecture.map(lec => ({type: 'lecture', 
+        data: {
+        name: lec.name,
+        description: lec.description,
+        capacity: lec.capacity,
+        id: lec.id,
+        registrations: lec.registerations
+        }
+    })),
+      ...onSearchUser.map(user => ({type: 'user', 
+        data: {
+          name: user.nickname,
+          description: user.description
+      }
+    }))
+    )
 
-    if (searchLecture) result.push(searchLecture);
-
-    return result;
-  }
-
-  async findUserByName(keyword: string) {
-    // join table 생성 후 구현 예정
+    return res
   }
 
   async findLectureByName(keyword: string) {
@@ -135,15 +145,6 @@ export class SearchService {
   }
 
   async onSearch(keyword: string, id: number){
-    if(keyword.length < 2) return {}
-    const res = []
-    const onSearchLecture = await this.findLectures(['name'], null, null, keyword, 10, 0)
-    const onSearchUser = await this.findUsers(['name'], null, keyword, 10, 0)
-    res.push(
-      ...onSearchLecture.map(lec => ({type: 'lecture', data: lec})),
-      ...onSearchUser.map(user => ({type: 'user', data: user}))
-    )
-
-    return res
+    //Autocomplete
   } //Logger id 
 }
