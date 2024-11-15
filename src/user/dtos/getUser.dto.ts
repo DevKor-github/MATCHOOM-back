@@ -25,7 +25,7 @@ class GetPrivateUserDto extends GetUserDto {
     this.name = user.name;
     this.birthday = user.birthday;
     this.description = user.description;
-    this.profileImagePath = user.profileImagePath;
+    this.profileImagePath = process.env.AWS_S3_CLOUDFRONT_DOMAIN + user.profileImagePath;
     this.genres = (user.genres || []).map((genre) => genre.id);
   }
   
