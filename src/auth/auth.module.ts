@@ -11,10 +11,11 @@ import { JwtRefreshStrategy } from './passports/jwtRefresh.strategy';
 import { KakaoStrategy } from './passports/kakao.strategy';
 import { UserService } from 'src/user/user.service';
 import { S3Service } from 'src/s3/s3.service';
+import { CustomGroup } from 'src/entities/customGroup.entity';
 
 @Module({
   imports:[
-    TypeOrmModule.forFeature([User, Tokens, Genre]),
+    TypeOrmModule.forFeature([User, Tokens, Genre, CustomGroup]),
     JwtModule.register({})  
   ],
   controllers: [AuthController],

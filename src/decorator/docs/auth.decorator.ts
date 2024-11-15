@@ -9,7 +9,8 @@ type EndPoints =
   | 'login'
   | 'logout'
   | 'refresh-token'
-  | 'social-login';
+  | 'social-login'
+  | 'kakao';
 
 export function Docs(endPoint: EndPoints) {
   switch (endPoint) {
@@ -75,6 +76,12 @@ export function Docs(endPoint: EndPoints) {
       }),
       ApiUnauthorizedResponse({
         description: "토큰 갱신 실패"
+      })
+    );
+    case 'kakao': return applyDecorators(
+      ApiOperation({
+        description: "카카오 로그인 화면으로 redirect 됨.  \n로그인 성공 시 auth/kakao-callback으로 redirect",
+        summary: "카카오 로그인"
       })
     );
   }

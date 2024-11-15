@@ -71,11 +71,13 @@ export class User {
   @JoinTable()
   teachingLectures: Lecture[];
 
-  @ManyToMany(() => Follow, follow => follow.users, { nullable: true, cascade: true })
-  @JoinTable()
-  follows: Follow[];
+  @OneToMany(() => Follow, (follow) => follow.following)
+  following: Follow[];
+
+  @OneToMany(() => Follow, (follow) => follow.follower)
+  followers: Follow[];
 
   @OneToMany(() => Tokens, token => token.user, { nullable: true, cascade: true })
   tokens: Tokens[];
-
+  
 }
