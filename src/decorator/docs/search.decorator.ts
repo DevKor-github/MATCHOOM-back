@@ -1,9 +1,12 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiHeader, ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { GetResultDto } from 'src/search/dtos/getResult.dto';
+
 type EndPoints =
   | 'hot'
   | 'upcoming-deadline'
   | 'recommend'
+  | 'get-all'
   | '/';
 
 export function Docs(endPoint: EndPoints) {
@@ -42,7 +45,7 @@ export function Docs(endPoint: EndPoints) {
     );
     case '/': return applyDecorators(
       ApiOperation({
-        description: "keyword를 파라미터로 받아 강의 검색, 결과 조회.  \nreturn값: [{id, name, description, capacity, registerations}]",
+        description: "keyword를 파라미터로 받아 강의 검색, 결과 조회.  \nreturn값: [{id, name, description}]",
         summary: "강의 검색"
       }),
       ApiParam({
@@ -52,6 +55,16 @@ export function Docs(endPoint: EndPoints) {
       }),
       ApiOkResponse({
         description: "강의 조회 성공"
+      })
+    );
+    case 'get-all': return applyDecorators(
+      ApiOperation({
+        description: "모든 강의 검색.  \nreturn값: [{id, name, description}]",
+        summary: "강의 검색"
+      }),
+      ApiOkResponse({
+        description: "강의 검색 성공",
+        type: [GetResultDto]
       })
     );
   }
