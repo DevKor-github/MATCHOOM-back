@@ -13,9 +13,7 @@ export class SearchService {
     private lectureRepository: Repository<Lecture>
   ) { }
 
-  async getCurationLecture() {
-    
-  }
+  async getCurationLecture() {}
 
   async getHotLecture(): Promise<Partial<Lecture>> {
     const fields = ['id', 'name', 'description'];
@@ -44,16 +42,28 @@ export class SearchService {
   }
 
   async getSearchResult(keyword: string) {
-    const result = [];
-    const searchLecture = await this.findLectureByName(keyword);
+    const res = []
+    const onSearchLecture = await this.findLectures(['name', 'description', 'capacity', 'id', 'registerations'], null, null, keyword, 10, 0)
+    const onSearchUser = await this.findUsers(['nickname', 'description'], null, keyword, 10, 0)
+    res.push(
+      ...onSearchLecture.map(lec => ({type: 'lecture', 
+        data: {
+        name: lec.name,
+        description: lec.description,
+        capacity: lec.capacity,
+        id: lec.id,
+        registrations: lec.registerations
+        }
+    })),
+      ...onSearchUser.map(user => ({type: 'user', 
+        data: {
+          name: user.nickname,
+          description: user.description
+      }
+    }))
+    )
 
-    if (searchLecture) result.push(searchLecture);
-
-    return result;
-  }
-
-  async findUserByName(keyword: string) {
-    // join table 생성 후 구현 예정
+    return res
   }
 
   async findLectureByName(keyword: string) {
@@ -74,7 +84,7 @@ export class SearchService {
     keyword?: string,
     limit?: number,
     offset?: number
-  ): Promise<Partial<Lecture>> {
+  ): Promise<Partial<Lecture>[]> {
     const queryBuilder = this.lectureRepository
     .createQueryBuilder('lecture')
     .select(fields.map(field => `lecture.${field}`));
@@ -104,9 +114,37 @@ export class SearchService {
     return await queryBuilder.getMany();
   }
 
-  async findUsers() {
-
+  async findUsers(
+    fields: string[],
+    orderBy?: { field: string, direction: 'ASC' | 'DESC' },
+    keyword?: string,
+    limit?: number,
+    offset?: number
+  ): Promise<Partial<User>[]> {
+    const queryBuilder = this.userRepository
+      .createQueryBuilder('user')
+      .select(fields.map(field => `user.${field}`));
+  
+    const conditions: string[] = [];
+    const parameters: any = {};
+  
+    if (keyword) {
+      conditions.push('user.nickname LIKE :keyword');
+      parameters.keyword = `%${keyword}%`;
+    }
+    if (conditions.length > 0) {
+      queryBuilder.where(conditions.join(' AND '), parameters);
+    }  
+    if (orderBy) {
+      queryBuilder.orderBy(`user.${orderBy.field}`, orderBy.direction);
+    }
+    if (limit) queryBuilder.take(limit);
+    if (offset) queryBuilder.skip(offset);
+  
+    return await queryBuilder.getMany();
   }
 
-  //async onSearch(){}
+  async onSearch(keyword: string, id: number){
+    //Autocomplete
+  } //Logger id 
 }
