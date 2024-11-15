@@ -15,7 +15,7 @@ export class UserController {
     private readonly userService: UserService
   ) { }
 
-  @Patch('/')
+  @Patch('/update')
   @UseGuards(AuthGuard('jwt-access'))
   @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 5 * 1024 * 1024 } }))
   @Docs('update')
