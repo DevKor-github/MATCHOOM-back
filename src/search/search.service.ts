@@ -68,8 +68,9 @@ export class SearchService {
 
   async findAll(): Promise<Partial<Lecture>[]> {
     const fields = ['id', 'name', 'description'];
+    const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'registerations', direction: 'DESC' };
 
-    const result = await this.findLectures(fields, 1, undefined, undefined, undefined, undefined);
+    const result = await this.findLectures(fields, 1, orderBy, undefined, undefined, undefined);
 
     return result;
   }
