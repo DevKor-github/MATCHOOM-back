@@ -110,8 +110,8 @@ export class LectureController {
         return await this.lectureService.getLectureInformation(lectureReadDto)
     }
 
-    @Get()
-    @Docs('/', 'GET')
+    @Get('cards')
+    @Docs('cards', 'GET')
     @UseGuards(AuthGuard('jwt-access'))
     async getInitialScreen(
         @User() user: LoginUserDto

@@ -28,7 +28,7 @@ export function Docs(endPoint: EndPoints) {
       ApiOkResponse({
         description: "강의 조회 성공"
       })
-    );
+    );/*
     case 'recommend': return applyDecorators(
       ApiOperation({
         description: "추천 조합 강의 조회. 아직 작동하지 않음  \nreturn값: [{id, name, description}]",
@@ -42,7 +42,7 @@ export function Docs(endPoint: EndPoints) {
       ApiOkResponse({
         description: "강의 조회 성공"
       })
-    );
+    );*/
     case '/': return applyDecorators(
       ApiOperation({
         description: "keyword를 파라미터로 받아 강의 검색, 결과 조회.  \nreturn값: [{id, name, description}]",

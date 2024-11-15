@@ -11,7 +11,7 @@ type EndPoints =
   | 'abstract'
   | 'apply'
   | 'info'
-  | '/'
+  | 'cards'
 
 export function Docs(endPoint: EndPoints, method: 'POST' | 'GET' | 'PATCH' | 'DELETE') {
   switch (endPoint) {
@@ -108,11 +108,11 @@ export function Docs(endPoint: EndPoints, method: 'POST' | 'GET' | 'PATCH' | 'DE
       );
       break;
 
-    case '/':
+    case 'cards':
       if(method == 'GET') return applyDecorators(
         ApiOperation({
-          description: "첫 화면에 위치할 모든 카드들을 불러옵니다.",
-          summary: "첫 화면 불러오기"
+          description: "첫 화면에 위치할 모든 카드들을 불러옵니다.\n 첫 화면에 떠야할 모든 카드들을 불러옵니다.\n 반환되는 카드들은 Student Access (type: 0), Creator Access (type: 1)로 구분되어있습니다.\n 시간순으로 정렬되어 표시됩니다.",
+          summary: "첫 화면에 위치할 카드들 불러오기"
         })
       )
   }
