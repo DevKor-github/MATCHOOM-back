@@ -10,7 +10,8 @@ type EndPoints =
   | 'logout'
   | 'refresh-token'
   | 'social-login'
-  | 'kakao';
+  | 'kakao'
+  | 'kakao/callback';
 
 export function Docs(endPoint: EndPoints) {
   switch (endPoint) {
@@ -80,8 +81,18 @@ export function Docs(endPoint: EndPoints) {
     );
     case 'kakao': return applyDecorators(
       ApiOperation({
-        description: "카카오 로그인 화면으로 redirect 됨.  \n로그인 성공 시 auth/kakao-callback으로 redirect",
+        description: "카카오 로그인 화면으로 redirect 됨.  \n로그인 성공 시 auth/kakao/callback으로 redirect  \nkakao/callback에서 id, refreshToken, accessToken 리턴",
         summary: "카카오 로그인"
+      })
+    );
+    case 'kakao/callback': return applyDecorators(
+      ApiOperation({
+        description: "카카오 로그인 성공 시 redirect 되는 url.  \nreturn 값: id, refreshToken, accessToken",
+        summary: "카카오 로그인(콜백)"
+      }),
+      ApiCreatedResponse({
+        type: LoginResponseDto,
+        description: "로그인 성공"
       })
     );
   }
