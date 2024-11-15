@@ -4,6 +4,7 @@ type EndPoints =
   | 'hot'
   | 'upcoming-deadline'
   | 'recommend'
+  | 'get-all'
   | '/';
 
 export function Docs(endPoint: EndPoints) {
@@ -49,6 +50,15 @@ export function Docs(endPoint: EndPoints) {
         name: "keyword",
         type: String,
         description: "검색어(keyword)를 파라미터로 받음"
+      }),
+      ApiOkResponse({
+        description: "강의 조회 성공"
+      })
+    );
+    case 'get-all': return applyDecorators(
+      ApiOperation({
+        description: "모든 강의 검색.  \nreturn값: [{id, name, description}]",
+        summary: "강의 검색"
       }),
       ApiOkResponse({
         description: "강의 조회 성공"

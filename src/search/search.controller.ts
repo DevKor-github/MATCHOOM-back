@@ -38,6 +38,11 @@ export class SearchController {
     return await this.searchService.getSearchResult(keyword);
   }
 
+  @Get('get-all')
+  async findAll() {
+    return await this.searchService.findAll();
+  }
+
   /*
   @Get('ac')
   @UseGuards(AuthGuard('jwt-access'))

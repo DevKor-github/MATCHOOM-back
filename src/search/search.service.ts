@@ -66,6 +66,14 @@ export class SearchService {
     return res
   }
 
+  async findAll(): Promise<Partial<Lecture>[]> {
+    const fields = ['id', 'name', 'description'];
+
+    const result = await this.findLectures(fields, 1, undefined, undefined, undefined, undefined);
+
+    return result;
+  }
+
   async findLectureByName(keyword: string) {
     const fields = ['id', 'name', 'description'];
     const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'registerations', direction: 'DESC' }; 
