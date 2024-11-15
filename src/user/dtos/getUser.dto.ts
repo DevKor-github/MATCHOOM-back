@@ -3,10 +3,14 @@ import { User } from 'src/entities/user.entity';
 
 class GetUserDto {
   constructor(user: User) {
+    this.id = user.id;
     this.nickname = user.nickname;
     this.description = user.description;
     this.profileImagePath = user.profileImagePath;
   }
+
+  @ApiProperty({ example: 1 })
+  id: number;
 
   @ApiProperty({ example: "닉네임이지" })
   nickname?: string;
