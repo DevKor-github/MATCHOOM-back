@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiHeader, ApiOkResponse, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { ApiHeader, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { GetResultDto } from 'src/search/dtos/getResult.dto';
 
 type EndPoints =
@@ -48,13 +48,26 @@ export function Docs(endPoint: EndPoints) {
         description: "keyword를 파라미터로 받아 강의 검색, 결과 조회.  \nreturn값: [{id, name, description}]",
         summary: "강의 검색"
       }),
+      ApiHeader({
+        description: "header => authorization => bearer 에 access token 주세요",
+        name: 'header',
+        required: true,
+        example: "Bearer <access_token>"
+      }),
       ApiParam({
         name: "keyword",
         type: String,
         description: "검색어(keyword)를 파라미터로 받음"
       }),
       ApiOkResponse({
-        description: "강의 조회 성공"
+        description: "강의 조회 성공",
+        type: [GetResultDto]
+      }),
+      ApiNotFoundResponse({
+        description: "강의 조회 실패(존재 하지 않는 강의)"
+      }),
+      ApiUnauthorizedResponse({
+        description: "강의 조회 실패(인증되지 않은 사용자)"
       })
     );
     case 'get-all': return applyDecorators(
