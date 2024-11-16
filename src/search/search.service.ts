@@ -52,13 +52,13 @@ export class SearchService {
         name: lec.name,
         description: lec.description
         }
-    })),
+    })),/*
       ...onSearchUser.map(user => ({type: 'user', 
         data: {
           name: user.nickname,
           description: user.description
       }
-    }))
+    }))*/
     )
 
     return res
