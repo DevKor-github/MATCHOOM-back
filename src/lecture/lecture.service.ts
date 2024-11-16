@@ -142,7 +142,7 @@ export class LectureService {
     async lectureApply(lectureApplyDto: LectureApplyDto, userId: number): Promise<object>{
         const lec = await this.lectureRepository.findOne({where:{id: lectureApplyDto.lectureId}, relations: ['user']})
         if(!lec) throw new NotFoundException("강의를 찾을 수 없습니다.")
-        const usr = await this.userRepository.findOne({where: {id: userId}})
+        const usr = await this.userRepository.findOne({where: {id: userId}, relations: ['learningLectures']})
         lec.user = lec.user ?? []
         usr.learningLectures = usr.learningLectures ?? []
         if(
