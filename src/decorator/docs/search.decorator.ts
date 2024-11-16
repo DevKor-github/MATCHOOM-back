@@ -61,7 +61,14 @@ export function Docs(endPoint: EndPoints) {
       }),
       ApiOkResponse({
         description: "강의 조회 성공",
-        type: [GetResultDto]
+        example: {
+          type: 'lecture',
+          data: {
+            id: 1,
+            name: "강의 제목 입니다.",
+            description: "강의 설명입니다."
+          }
+        }
       }),
       ApiNotFoundResponse({
         description: "강의 조회 실패(존재 하지 않는 강의)"
