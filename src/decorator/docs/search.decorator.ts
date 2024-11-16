@@ -52,6 +52,7 @@ export function Docs(endPoint: EndPoints) {
         description: "header => authorization => bearer 에 access token 주세요",
         name: 'header',
         required: true,
+        example: "Bearer <access_token>"
       }),
       ApiParam({
         name: "keyword",
