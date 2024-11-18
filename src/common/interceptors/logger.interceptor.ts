@@ -5,6 +5,7 @@ import { tap, catchError } from 'rxjs/operators';
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    const income = Date.now()
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();
 
@@ -16,14 +17,17 @@ export class LoggingInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       tap((data) => {
+        const elapse_time = Date.now()-income
         console.log('Response:', {
           statusCode: response.statusCode,
           data,
+          elapse_time: `${elapse_time}ms`,
         });
       }),
 
       catchError((error) => {
-        console.error('Error:', error);
+        const elapse_time = Date.now()-income
+        console.error('Error:', error, `After ${elapse_time}ms`);
         throw error;
       })
     );
