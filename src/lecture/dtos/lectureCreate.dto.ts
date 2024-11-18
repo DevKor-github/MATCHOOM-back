@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsInt, IsArray, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl, Min, IsBoolean, IsIn } from "class-validator"
+import { IsInt, IsArray, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl, Min, IsBoolean, IsIn, Max } from "class-validator"
 
 class LectureCreateDto{
     @IsArray()
@@ -7,6 +7,10 @@ class LectureCreateDto{
     @ApiProperty({example: "[userId, userId, ... ]"})
     instructorId?: string[]
     //자신의 아이디는 제외하기
+
+    @ApiProperty({ example: [0, 1, 2] })
+    @IsOptional()
+    genres?: number[];
 
     @IsBoolean()
     @IsOptional()
@@ -50,7 +54,9 @@ class LectureCreateDto{
     @ApiProperty({example: "2024-10-07 10:00:00"})
     closeTime: Date
 
-    @IsNumber()
+    @IsInt()
+    @Min(0)
+    @Max(3)
     @IsOptional()
     @ApiProperty({example: 1})
     difficulty: number
