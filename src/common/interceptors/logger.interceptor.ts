@@ -9,16 +9,15 @@ export class LoggingInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();
 
-    const elapse_time = Date.now()-income
     console.log('Request:', {
       method: request.method,
       url: request.url,
       headers: request.headers,
-      elapse_time: `${elapse_time}ms`,
     });
 
     return next.handle().pipe(
       tap((data) => {
+        const elapse_time = Date.now()-income
         console.log('Response:', {
           statusCode: response.statusCode,
           data,
@@ -27,6 +26,7 @@ export class LoggingInterceptor implements NestInterceptor {
       }),
 
       catchError((error) => {
+        const elapse_time = Date.now()-income
         console.error('Error:', error, `After ${elapse_time}ms`);
         throw error;
       })
