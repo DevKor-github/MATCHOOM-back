@@ -172,30 +172,34 @@ export class LectureService {
     }
 
     async getInitialScreen(userId: number): Promise<object>{
-        const student_res = (await this.getUserStudOwnLectures(userId))
-        .filter((e) => new Date(e.lectureTime).getTime() + e.length*60*1000 > new Date().getTime())
-        .map((e) =>({
-            name: e.name,
-            lecturetime: e.lectureTime,
-            length: e.length,
-            price: e.price,
-            type: 0
-        }))
-
-        const create_res = (await this.getUserCreateOwnLectures(userId))
-        .filter((e) => new Date(e.lectureTime).getTime() + e.length*60*1000 > new Date().getTime())
-        .map((e) =>({
-            name: e.name,
-            lecturetime: e.lectureTime,
-            length: e.length,
-            price: e.price,
-            type: 1
-        }))
-
+        const as_student = await this.getUserStudOwnLectures(userId)
+        const as_creator = await this.getUserCreateOwnLectures(userId)
+        console.log(as_student, as_creator)
+        const student_res = this.getfiltered_cards(as_student, 0)
+        const create_res = this.getfiltered_cards(as_creator, 1)
         const res = [...student_res, ...create_res].sort((a, b) =>
             new Date(a.lecturetime).getTime() - new Date(b.lecturetime).getTime()
         )
 
+        return res
+    }
+
+    getfiltered_cards(dat: Lecture[], type: 0|1){
+        const res = dat
+        .filter((e) => {
+            const lectureDate = new Date(e.lectureTime)
+            const on24 = new Date(lectureDate.setHours(23,59,59,999)).getTime()
+            return on24 > Date.now()
+        })
+        .map((e) =>({
+            id: e.id,
+            name: e.name,
+            lecturetime: e.lectureTime,
+            length: e.length,
+            price: e.price,
+            type: type,
+            location: e.location
+        }))
         return res
     }
 
@@ -207,12 +211,12 @@ export class LectureService {
     async getLectureAbstract(lectureId: number): Promise<object>{
         const res = await this.lectureRepository.findOne({where: {id: lectureId}})
         return {
+            id: res.id,
             name: res.name,
             instructors: res.instructor
             .map((e) => e.nickname),
             lecturetime: res.lectureTime,
-            length: res.length
-
+            location: res.location,
         }
     }
 
