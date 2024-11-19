@@ -6,10 +6,11 @@ import { JwtAccessStrategy } from 'src/auth/passports/jwtAccess.strategy';
 import { Lecture } from 'src/entities/lecture.entity';
 import { User } from 'src/entities/user.entity';
 import { CustomGroup } from 'src/entities/customGroup.entity';
+import { LectureGroup } from 'src/entities/lecturegroup.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Lecture, User, CustomGroup]),
+    TypeOrmModule.forFeature([Lecture, User, CustomGroup, LectureGroup]),
   ],
   controllers: [ LectureController ],
   providers: [ LectureService, JwtAccessStrategy ]
