@@ -1,5 +1,26 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsInt, IsArray, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl, Min, IsBoolean, IsIn } from "class-validator"
+import { IsInt, IsArray, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString, IsUrl, Min, IsBoolean, ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments, Validate } from "class-validator"
+
+@ValidatorConstraint({ name: 'IsDateOrDateArray', async: false })
+export class IsDateOrDateArrayConstraint implements ValidatorConstraintInterface {
+  validate(value: any, args: ValidationArguments) {
+    if (!value) return false
+
+    if (typeof value === 'string' && !isNaN(Date.parse(value))) {
+      return true
+    }
+
+    if (Array.isArray(value)) {
+      return value.every((item) => typeof item === 'string' && !isNaN(Date.parse(item)))
+    }
+
+    return false
+  }
+
+  defaultMessage(args: ValidationArguments) {
+    return `lectureTime must be one valid date string | an array of date strings`
+  }
+}
 
 class LectureCreateDto{
     @IsArray()
@@ -30,7 +51,7 @@ class LectureCreateDto{
     @ApiProperty({example: 100})
     capacity: number
 
-    @IsDateString()
+    @Validate(IsDateOrDateArrayConstraint)
     @IsNotEmpty()
     @ApiProperty({example: "'2024-10-07 10:00:00' | (원데이) 또는 ['2024-10-07 10:00:00', '2024-10-22 10:00:00'] | 여러개"})
     lectureTime: Date | Date[]
