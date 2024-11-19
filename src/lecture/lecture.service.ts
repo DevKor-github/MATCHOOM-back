@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LectureGroupCreateDto, LectureGroupDeleteDto, LectureGroupUpdateDto } from './dtos/lecturegroup.dto';
 import { CustomGroup } from 'src/entities/customGroup.entity';
 import { LectureDeleteDto, LectureUpdateDto } from './dtos/lectureUpdate.dto';
+import { LectureGroup } from 'src/entities/lecturegroup.entity';
 
 @Injectable()
 export class LectureService {
@@ -83,14 +84,13 @@ export class LectureService {
             msg = "Minimum must larger than capacity, changed to default value"
         }
         
-        let dates: Date[] = []
-        if (Array.isArray(lectureCreateDto.lectureTime)) {
-            dates = lectureCreateDto.lectureTime
-        } else if (lectureCreateDto.lectureTime) {
-            dates.push(lectureCreateDto.lectureTime)
-        }
+        const dates: Date[] = Array.isArray(lectureCreateDto.lectureTime)
+            ? lectureCreateDto.lectureTime
+            : lectureCreateDto.lectureTime
+            ? [lectureCreateDto.lectureTime]
+            : []
         
-        const res = []
+        const res: Lecture[] = []
         for(const date of dates){
         const instructor = await Promise.all(
             instructors.map(async(e: string) =>{
@@ -113,7 +113,14 @@ export class LectureService {
         const savedLecture = await this.lectureRepository.save(newLecture)
         res.push(savedLecture)
     }
-        return {message: msg || "강의 생성 성공", result: res}
+    let lectureGroup: LectureGroup | null = null
+    if(res.length>1){
+        lectureGroup = new LectureGroup()
+        lectureGroup.name = res[0].name
+        lectureGroup.primaryLecture = res[0]
+        lectureGroup.lectures = res
+    }
+        return {message: msg || "강의 생성 성공", result: res, group: lectureGroup || null}
     }
     /*
     getJunggiLessonDays(
