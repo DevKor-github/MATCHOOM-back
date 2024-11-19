@@ -1,7 +1,8 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 import { CustomGroup } from "./customGroup.entity";
 import { Genre } from "./genre.entity";
+import { LectureGroup } from "./lecturegroup.entity";
 
 @Entity()
 export class Lecture {
@@ -66,4 +67,7 @@ export class Lecture {
   @ManyToMany(() => CustomGroup, customGroup => customGroup.lectures)
   @JoinTable()
   customGroups: CustomGroup[]
+
+  @ManyToOne(() => LectureGroup, (lectureGroup) => lectureGroup.lectures, { nullable: true })
+  lectureGroup: LectureGroup | null
 }
