@@ -1,5 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiHeader, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { GetHomeResponseDto } from 'src/search/dtos/getHome.dto';
 import { GetResultDto } from 'src/search/dtos/getResult.dto';
 
 type EndPoints =
@@ -7,6 +8,7 @@ type EndPoints =
   | 'upcoming-deadline'
   | 'recommend'
   | 'get-all'
+  | 'home'
   | '/';
 
 export function Docs(endPoint: EndPoints) {
@@ -85,6 +87,49 @@ export function Docs(endPoint: EndPoints) {
       ApiOkResponse({
         description: "강의 검색 성공",
         type: [GetResultDto]
+      }),
+      ApiNotFoundResponse({
+        description: "강의 조회 실패(존재 하지 않는 강의)"
+      })
+    );
+    case 'home': return applyDecorators(
+      ApiOperation({
+        description: "탐색 홈 화면.  \nreturn값",
+        summary: "탐색 홈 화면"
+      }),
+      ApiOkResponse({
+        description: "홈 화면 조회 성공",
+        /*
+        example: {
+          deadline: [
+            {
+              "id": 5,
+              "name": "춤추는 호랑이",
+              "closeTime": "2024-11-27T01:00:00.000Z",
+              "description": "설명"
+            },
+            {
+              "id": 7,
+              "name": "춤추는 호랑이2",
+              "closeTime": "2024-11-27T01:00:00.000Z",
+              "description": "설명"
+            }
+          ],
+          hot: [
+            {
+              "id": 4,
+              "name": "강의4",
+              "description": "\"수업이요\""
+            },
+            {
+              "id": 5,
+              "name": "춤추는 호랑이",
+              "description": "설명"
+            },
+          ]
+        }
+          */
+         type: GetHomeResponseDto
       })
     );
   }

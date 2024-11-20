@@ -46,6 +46,12 @@ export class SearchController {
     return await this.searchService.findAll();
   }
 
+  @Get('home')
+  @Docs('home')
+  async getHome() {
+    return await this.searchService.getHome();
+  }
+
   /*
   @Get('ac')
   @UseGuards(AuthGuard('jwt-access'))

@@ -27,7 +27,7 @@ export class SearchService {
   }
   
   async getUpcomingDeadlineLecture(): Promise<Partial<Lecture>> {
-    const fields = ['id', 'name', 'description', 'closeTime'];
+    const fields = ['id', 'name', 'description', 'capacity', 'registerations'];
     const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'closeTime', direction: 'ASC' }; 
     const limit = 10;
     const offset = 0;
@@ -39,6 +39,14 @@ export class SearchService {
 
   async getRecommendLecture(userId: number) {
     
+  }
+
+  async getHome() {
+    const curationLectures = await this.getCurationLecture();
+    const deadlineLectures = await this.getUpcomingDeadlineLecture();
+    const hotLectures = await this.getHotLecture();
+
+    return { curation: curationLectures, deadline: deadlineLectures, hot: hotLectures };
   }
 
   async getSearchResult(keyword: string) {
