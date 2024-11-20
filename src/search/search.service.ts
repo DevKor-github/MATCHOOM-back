@@ -41,14 +41,6 @@ export class SearchService {
     
   }
 
-  async getHome() {
-    const curationLectures = await this.getCurationLecture();
-    const deadlineLectures = await this.getUpcomingDeadlineLecture();
-    const hotLectures = await this.getHotLecture();
-
-    return { curation: curationLectures, deadline: deadlineLectures, hot: hotLectures };
-  }
-
   async getSearchResult(keyword: string) {
     const res = [];
     const onSearchLecture = await this.findLectures(['id', 'name', 'description'], 1, undefined, keyword, undefined, undefined);
