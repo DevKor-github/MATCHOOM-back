@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 import { CustomGroup } from "./customGroup.entity";
 import { Genre } from "./genre.entity";
@@ -56,6 +56,15 @@ export class Lecture {
 
   @Column()
   contact: string
+
+  @Column()
+  remaining: number
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  calculateRemaining(){
+    this.remaining = this.capacity - this.registerations
+  }
 
   @ManyToMany(() => Genre, genre => genre.lectures, { cascade: true })
   @JoinTable()
