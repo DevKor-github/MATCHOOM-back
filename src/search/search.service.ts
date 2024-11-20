@@ -27,8 +27,8 @@ export class SearchService {
   }
   
   async getUpcomingDeadlineLecture(): Promise<Partial<Lecture>> {
-    const fields = ['id', 'name', 'description', 'capacity', 'registerations'];
-    const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'closeTime', direction: 'ASC' }; 
+    const fields = ['id', 'name', 'description'];
+    const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'availability', direction: 'ASC' }; 
     const limit = 10;
     const offset = 0;
 
@@ -108,7 +108,13 @@ export class SearchService {
     const parameters: any = {};
     const currentTime: Date = new Date();
 
-    if (orderBy) queryBuilder.orderBy(`lecture.${orderBy.field}`, orderBy.direction);
+    if (orderBy) {
+      if (orderBy.field === 'availability') {
+        queryBuilder.addSelect('lecture.capacity - lecture.registerations', 'availability');
+        queryBuilder.orderBy(`availability`, orderBy.direction);
+      }
+      else queryBuilder.orderBy(`lecture.${orderBy.field}`, orderBy.direction);
+    }
     if (limit) queryBuilder.take(limit);
     if (offset) queryBuilder.skip(offset);
     if (keyword) {
