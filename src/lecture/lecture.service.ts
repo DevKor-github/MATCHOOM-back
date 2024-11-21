@@ -28,15 +28,15 @@ export class LectureService {
             msg = "Minimum must larger than capacity, changed to default value"
         }
         try{
-            const lec = await this.lectureRepository.findOne({where: {id: lectureUpdateDto.lectureId}})
             const isOwner = await this.lectureOwnerCheck(lectureUpdateDto.lectureId, userId);
             if (!isOwner) throw new ForbiddenException("소유하지 않은 강의")
-            const toUpdate = {}
+            const toUpdate:Partial<Lecture> = {}
             for(const key in lectureUpdateDto){
-                if(lectureUpdateDto[key] !== undefined && lectureUpdateDto[key] !== null)
+                if(lectureUpdateDto[key] !== undefined && lectureUpdateDto[key] !== null && key !== 'lectureId')
                 toUpdate[key] = lectureUpdateDto[key]
             }
-            await this.lectureRepository.update(lec, toUpdate)
+            await this.lectureRepository.update(lectureUpdateDto.lectureId, toUpdate)
+
         }catch(err){
             throw new InternalServerErrorException(err)
         }
