@@ -5,8 +5,11 @@ import { GetResultDto } from 'src/search/dtos/getResult.dto';
 
 type EndPoints =
   | 'hot'
+  | 'hot-home'
   | 'upcoming-deadline'
+  | 'upcoming-deadline-home'
   | 'recommend'
+  | 'recommend-home'
   | 'get-all'
   | 'home'
   | '/';
@@ -22,6 +25,15 @@ export function Docs(endPoint: EndPoints) {
         description: "강의 조회 성공"
       })
     );
+    case 'hot-home': return applyDecorators(
+      ApiOperation({
+        description: "hot 강의 조회. 등록 인원 순으로 내림차순 정렬하여 조회  \nreturn값: [{id, name, description}]",
+        summary: "HOT 강의 조회(홈 화면 전용)"
+      }),
+      ApiOkResponse({
+        description: "강의 조회 성공"
+      })
+    );
     case 'upcoming-deadline': return applyDecorators(
       ApiOperation({
         description: "마감임박 강의 조회. 마감 시간 순으로 내림차순 정렬하여 조회  \nreturn값: [type: lecture/ user, {id, name, description, closeTime}]",
@@ -30,21 +42,40 @@ export function Docs(endPoint: EndPoints) {
       ApiOkResponse({
         description: "강의 조회 성공"
       })
-    );/*
-    case 'recommend': return applyDecorators(
+    );
+    case 'upcoming-deadline-home': return applyDecorators(
       ApiOperation({
-        description: "추천 조합 강의 조회. 아직 작동하지 않음  \nreturn값: [{id, name, description}]",
-        summary: "추천 조합 강의 조회"
-      }),
-      ApiHeader({
-        description: "header => authorization => bearer 에 access token 주세요",
-        name: 'header',
-        required: true,
+        description: "마감임박 강의 조회. 마감 시간 순으로 내림차순 정렬하여 조회  \nreturn값: [type: lecture/ user, {id, name, description, closeTime}]",
+        summary: "마감임박 강의 조회(홈 화면 전용)"
       }),
       ApiOkResponse({
         description: "강의 조회 성공"
       })
-    );*/
+    );
+    case 'recommend': return applyDecorators(
+      ApiOperation({
+        description: "추천 조합 강의 조회. 아직 정해진 추천 기준이 없어 임의의 강의 전송.   \nreturn값: [{id, name, description}]",
+        summary: "추천 조합 강의 조회(홈 화면 전용)"
+      }),
+      ApiOkResponse({
+        description: "강의 조회 성공"
+      }),
+      ApiNotFoundResponse({
+        description: "강의 조회 실패(존재 하지 않는 강의)"
+      }),
+    );    
+    case 'recommend-home': return applyDecorators(
+      ApiOperation({
+        description: "추천 조합 강의 조회. 아직 정해진 추천 기준이 없어 임의의 강의 전송.  \nreturn값: [{id, name, description}]",
+        summary: "추천 조합 강의 조회"
+      }),
+      ApiOkResponse({
+        description: "강의 조회 성공"
+      }),
+      ApiNotFoundResponse({
+        description: "강의 조회 실패(존재 하지 않는 강의)"
+      }),
+    );
     case '/': return applyDecorators(
       ApiOperation({
         description: "keyword를 파라미터로 받아 강의 검색, 결과 조회.  \nreturn값: [{id, name, description}]",
@@ -90,46 +121,6 @@ export function Docs(endPoint: EndPoints) {
       }),
       ApiNotFoundResponse({
         description: "강의 조회 실패(존재 하지 않는 강의)"
-      })
-    );
-    case 'home': return applyDecorators(
-      ApiOperation({
-        description: "탐색 홈 화면.  \nreturn값",
-        summary: "탐색 홈 화면"
-      }),
-      ApiOkResponse({
-        description: "홈 화면 조회 성공",
-        /*
-        example: {
-          deadline: [
-            {
-              "id": 5,
-              "name": "춤추는 호랑이",
-              "closeTime": "2024-11-27T01:00:00.000Z",
-              "description": "설명"
-            },
-            {
-              "id": 7,
-              "name": "춤추는 호랑이2",
-              "closeTime": "2024-11-27T01:00:00.000Z",
-              "description": "설명"
-            }
-          ],
-          hot: [
-            {
-              "id": 4,
-              "name": "강의4",
-              "description": "\"수업이요\""
-            },
-            {
-              "id": 5,
-              "name": "춤추는 호랑이",
-              "description": "설명"
-            },
-          ]
-        }
-          */
-         type: GetHomeResponseDto
       })
     );
   }

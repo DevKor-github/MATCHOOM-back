@@ -13,7 +13,16 @@ export class SearchService {
     private lectureRepository: Repository<Lecture>
   ) { }
 
-  async getCurationLecture() {}
+  async getCurationLecture() {
+    const fields = ['id', 'name', 'description'];
+    const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'registerations', direction: 'DESC' }; 
+    const limit = 10;
+    const offset = 0;
+
+    const result = await this.findLectures(fields, 1, orderBy, undefined, limit, offset);
+
+    return result;
+  }
 
   async getHotLecture(): Promise<Partial<Lecture>> {
     const fields = ['id', 'name', 'description'];
@@ -37,8 +46,15 @@ export class SearchService {
     return result;
   }
 
-  async getRecommendLecture(userId: number) {
-    
+  async getRecommendLecture() {
+    const fields = ['id', 'name', 'description'];
+    const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'registerations', direction: 'DESC' }; 
+    const limit = 10;
+    const offset = 0;
+
+    const result = await this.findLectures(fields, 1, orderBy, undefined, limit, offset);
+
+    return result;
   }
 
   async getSearchResult(keyword: string) {
