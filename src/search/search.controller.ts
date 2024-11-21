@@ -15,9 +15,11 @@ export class SearchController {
 
   /*
   @Get('curation')
+  @Docs('curation')
   async getCurationLecture() {}
   */
   @Get('curation-home')
+  @Docs('curation-home')
   async getCurationLectureForHome() {
     return await this.searchService.getCurationLecture();
   }
@@ -60,11 +62,10 @@ export class SearchController {
     return await this.searchService.getRecommendLecture();
   }
 
-  @Get('')
-  @Docs('/')
-  @UseGuards(AuthGuard('jwt-access'))
-  async getSearchResult(@Query('keyword') keyword: string) {
-    return await this.searchService.getSearchResult(keyword);
+  @Get('results')
+  @Docs('results')
+  async getSearchResult(@Query('keyword') keyword: string, @Query('page') page: number) {
+    return await this.searchService.getSearchResult(keyword, page);
   }
 
   @Get('get-all')

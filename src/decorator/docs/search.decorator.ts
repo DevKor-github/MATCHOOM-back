@@ -1,9 +1,11 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiHeader, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiHeader, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { GetHomeResponseDto } from 'src/search/dtos/getHome.dto';
 import { GetResultDto } from 'src/search/dtos/getResult.dto';
 
 type EndPoints =
+  | 'curation'
+  | 'curation-home'
   | 'hot'
   | 'hot-home'
   | 'upcoming-deadline'
@@ -12,10 +14,34 @@ type EndPoints =
   | 'recommend-home'
   | 'get-all'
   | 'home'
-  | '/';
+  | 'results';
 
 export function Docs(endPoint: EndPoints) {
   switch (endPoint) {
+    case 'curation': return applyDecorators(
+      ApiOperation({
+        description: "오늘의 큐레이션 조회. 아직 정해진 기준이 없어 임의의 강의 전송.   \nreturn값: [{id, name, description}]",
+        summary: "오늘의 큐레이션 조회"
+      }),
+      ApiOkResponse({
+        description: "강의 조회 성공"
+      }),
+      ApiNotFoundResponse({
+        description: "강의 조회 실패(존재 하지 않는 강의)"
+      }),
+    );   
+    case 'curation-home': return applyDecorators(
+      ApiOperation({
+        description: "오늘의 큐레이션 조회. 아직 정해진 기준이 없어 임의의 강의 전송.   \nreturn값: [{id, name, description}]",
+        summary: "오늘의 큐레이션 조회(홈 화면 전용)"
+      }),
+      ApiOkResponse({
+        description: "강의 조회 성공"
+      }),
+      ApiNotFoundResponse({
+        description: "강의 조회 실패(존재 하지 않는 강의)"
+      }),
+    );   
     case 'hot': return applyDecorators(
       ApiOperation({
         description: "hot 강의 조회. 등록 인원 순으로 내림차순 정렬하여 조회  \nreturn값: [{id, name, description}]",
@@ -32,24 +58,33 @@ export function Docs(endPoint: EndPoints) {
       }),
       ApiOkResponse({
         description: "강의 조회 성공"
+      }),
+      ApiNotFoundResponse({
+        description: "강의 조회 실패(존재 하지 않는 강의)"
       })
     );
     case 'upcoming-deadline': return applyDecorators(
       ApiOperation({
-        description: "마감임박 강의 조회. 마감 시간 순으로 내림차순 정렬하여 조회  \nreturn값: [type: lecture/ user, {id, name, description, closeTime}]",
+        description: "마감임박 강의 조회. 남은 신청 가능 인원 순으로 내림차순 정렬하여 조회  \nreturn값: [{id, name, description, closeTime}]",
         summary: "마감임박 강의 조회"
       }),
       ApiOkResponse({
         description: "강의 조회 성공"
+      }),
+      ApiNotFoundResponse({
+        description: "강의 조회 실패(존재 하지 않는 강의)"
       })
     );
     case 'upcoming-deadline-home': return applyDecorators(
       ApiOperation({
-        description: "마감임박 강의 조회. 마감 시간 순으로 내림차순 정렬하여 조회  \nreturn값: [type: lecture/ user, {id, name, description, closeTime}]",
+        description: "마감임박 강의 조회. 남은 신청 가능 인원 순으로 내림차순 정렬하여 조회  \nreturn값: [{id, name, description, closeTime}]",
         summary: "마감임박 강의 조회(홈 화면 전용)"
       }),
       ApiOkResponse({
         description: "강의 조회 성공"
+      }),
+      ApiNotFoundResponse({
+        description: "강의 조회 실패(존재 하지 않는 강의)"
       })
     );
     case 'recommend': return applyDecorators(
@@ -76,9 +111,9 @@ export function Docs(endPoint: EndPoints) {
         description: "강의 조회 실패(존재 하지 않는 강의)"
       }),
     );
-    case '/': return applyDecorators(
+    case 'results': return applyDecorators(
       ApiOperation({
-        description: "keyword를 파라미터로 받아 강의 검색, 결과 조회.  \nreturn값: [{id, name, description}]",
+        description: "keyword를 파라미터로 받아 강의 검색, 결과 조회.  \nreturn값: [type: lecture, data: {id, name, description}]",
         summary: "강의 검색"
       }),
       ApiHeader({
@@ -87,10 +122,15 @@ export function Docs(endPoint: EndPoints) {
         required: true,
         example: "Bearer <access_token>"
       }),
-      ApiParam({
+      ApiQuery({
         name: "keyword",
         type: String,
         description: "검색어(keyword)를 파라미터로 받음"
+      }),
+      ApiQuery({
+        name: "page",
+        type: Number,
+        description: "페이지(page)를 파라미터로 받음.  \n무한 스크롤이나 페이지네이션을 고려.  \npage입력 안할 시 1페이지 전송"
       }),
       ApiOkResponse({
         description: "강의 조회 성공",
