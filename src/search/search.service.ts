@@ -59,25 +59,31 @@ export class SearchService {
 
   async getSearchResult(keyword: string, page: number) {
     const res = [];
-    const onSearchLecture = await this.findLectures(['id', 'name', 'description'], 1, undefined, keyword, 5, (page - 1) * 5);
+    const offset = 10
+    const lecture = await this.findLectures(['id', 'name', 'description'], 1, undefined, keyword, offset, (page - 1) * offset);
     const onSearchUser = await this.findUsers(['nickname', 'description'], null, keyword, undefined, undefined);
+    const isEnd = lecture.length < offset;
+/*
     res.push(
-      ...onSearchLecture.map(lec => ({type: 'lecture', 
+      ...onSearchLecture.map(lec => ({
+        type: 'lecture', 
+        isEnd: onSearchLecture.length < 10,
         data: {
         id: lec.id,
         name: lec.name,
         description: lec.description
         }
-    })),/*
+    })),
       ...onSearchUser.map(user => ({type: 'user', 
         data: {
           name: user.nickname,
           description: user.description
       }
-    }))*/
+    }))
     )
+  */
 
-    return res
+    return { isEnd, lecture }
   }
 
   async findAll(): Promise<Partial<Lecture>[]> {

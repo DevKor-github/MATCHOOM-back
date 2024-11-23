@@ -116,12 +116,6 @@ export function Docs(endPoint: EndPoints) {
         description: "keyword를 파라미터로 받아 강의 검색, 결과 조회.  \nreturn값: [type: lecture, data: {id, name, description}]",
         summary: "강의 검색"
       }),
-      ApiHeader({
-        description: "header => authorization => bearer 에 access token 주세요",
-        name: 'header',
-        required: true,
-        example: "Bearer <access_token>"
-      }),
       ApiQuery({
         name: "keyword",
         type: String,
@@ -133,14 +127,14 @@ export function Docs(endPoint: EndPoints) {
         description: "페이지(page)를 파라미터로 받음.  \n무한 스크롤이나 페이지네이션을 고려.  \npage입력 안할 시 1페이지 전송"
       }),
       ApiOkResponse({
-        description: "강의 조회 성공",
+        description: "강의 조회 성공.  \nlecture: [{id, name, description}] 반환 isEnd는 불러 올 데이터가 더 이상 없는 경우 true",
         example: {
-          type: 'lecture',
-          data: {
+          isEnd: true,
+          lecture: [{
             id: 1,
             name: "강의 제목 입니다.",
             description: "강의 설명입니다."
-          }
+          }]
         }
       }),
       ApiNotFoundResponse({
