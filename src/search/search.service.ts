@@ -13,7 +13,16 @@ export class SearchService {
     private lectureRepository: Repository<Lecture>
   ) { }
 
-  async getCurationLecture() {}
+  async getCurationLecture() {
+    const fields = ['id', 'name', 'description'];
+    const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'registerations', direction: 'DESC' }; 
+    const limit = 10;
+    const offset = 0;
+
+    const result = await this.findLectures(fields, 1, orderBy, undefined, limit, offset);
+
+    return result;
+  }
 
   async getHotLecture(): Promise<Partial<Lecture>> {
     const fields = ['id', 'name', 'description'];
@@ -27,8 +36,8 @@ export class SearchService {
   }
   
   async getUpcomingDeadlineLecture(): Promise<Partial<Lecture>> {
-    const fields = ['id', 'name', 'description', 'closeTime'];
-    const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'closeTime', direction: 'ASC' }; 
+    const fields = ['id', 'name', 'description'];
+    const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'availability', direction: 'ASC' }; 
     const limit = 10;
     const offset = 0;
 
@@ -37,31 +46,44 @@ export class SearchService {
     return result;
   }
 
-  async getRecommendLecture(userId: number) {
-    
+  async getRecommendLecture() {
+    const fields = ['id', 'name', 'description'];
+    const orderBy: { field: string; direction: 'ASC' | 'DESC' } = { field: 'registerations', direction: 'DESC' }; 
+    const limit = 10;
+    const offset = 0;
+
+    const result = await this.findLectures(fields, 1, orderBy, undefined, limit, offset);
+
+    return result;
   }
 
-  async getSearchResult(keyword: string) {
+  async getSearchResult(keyword: string, page: number) {
     const res = [];
-    const onSearchLecture = await this.findLectures(['id', 'name', 'description'], 1, undefined, keyword, undefined, undefined);
+    const offset = 10
+    const lecture = await this.findLectures(['id', 'name', 'description'], 1, undefined, keyword, offset, (page - 1) * offset);
     const onSearchUser = await this.findUsers(['nickname', 'description'], null, keyword, undefined, undefined);
+    const isEnd = lecture.length < offset;
+/*
     res.push(
-      ...onSearchLecture.map(lec => ({type: 'lecture', 
+      ...onSearchLecture.map(lec => ({
+        type: 'lecture', 
+        isEnd: onSearchLecture.length < 10,
         data: {
         id: lec.id,
         name: lec.name,
         description: lec.description
         }
-    })),/*
+    })),
       ...onSearchUser.map(user => ({type: 'user', 
         data: {
           name: user.nickname,
           description: user.description
       }
-    }))*/
+    }))
     )
+  */
 
-    return res
+    return { isEnd, lecture }
   }
 
   async findAll(): Promise<Partial<Lecture>[]> {
@@ -100,7 +122,13 @@ export class SearchService {
     const parameters: any = {};
     const currentTime: Date = new Date();
 
-    if (orderBy) queryBuilder.orderBy(`lecture.${orderBy.field}`, orderBy.direction);
+    if (orderBy) {
+      if (orderBy.field === 'availability') {
+        queryBuilder.addSelect('lecture.capacity - lecture.registerations', 'availability');
+        queryBuilder.orderBy(`availability`, orderBy.direction);
+      }
+      else queryBuilder.orderBy(`lecture.${orderBy.field}`, orderBy.direction);
+    }
     if (limit) queryBuilder.take(limit);
     if (offset) queryBuilder.skip(offset);
     if (keyword) {
