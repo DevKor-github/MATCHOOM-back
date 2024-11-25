@@ -9,6 +9,7 @@ import { User } from 'src/entities/user.entity';
 import { RenewTokenResponseDto } from './dtos/renewToken.dto';
 import { Tokens } from 'src/entities/token.entity';
 import { UserService } from 'src/user/user.service';
+import UAparser, { UAParser } from 'ua-parser-js';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +22,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async register(registerRequestDto: RegisterRequestDto): Promise<RegisterResponseDto> {
+  async register(registerRequestDto: RegisterRequestDto, userAgent: string): Promise<RegisterResponseDto> {
     const { name, userId, password, nickname, birthday, gender, genres, address } = registerRequestDto;
 
     const userIdCheck = await this.userRepository.findOne({ where: { userId } });
@@ -46,12 +47,12 @@ export class AuthService {
     await this.userService.updateUser(id, { nickname, birthday, gender, address, genres } )
     
     const accessToken = this.generateAccessToken(id);
-    const refreshToken = await this.generateRefreshToken(id);
+    const refreshToken = await this.generateRefreshToken(id, userAgent);
 
     return { id, nickname, accessToken, refreshToken };
   }
 
-  async login(loginRequestDto: LoginRequestDto): Promise<LoginResponseDto> {
+  async login(loginRequestDto: LoginRequestDto, userAgent: string): Promise<LoginResponseDto> {
     const { userId, password } = loginRequestDto;
 
     const user = await this.userRepository.findOne({ where: { userId } });
@@ -60,14 +61,14 @@ export class AuthService {
     const passwordCheck = await compare(password, user.password);
     if (!passwordCheck) throw new UnauthorizedException("아이디 또는 비밀번호가 틀렸습니다.");
 
-    return await this.generateTokens(user.id);
+    return await this.generateTokens(user.id, userAgent);
   }
 
-  async logout(id: number) {
+  async logout(id: number, userAgent: string) {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new UnauthorizedException("존재하지 않는 유저입니다.");
 
-    await this.tokensRepository.delete({ user: user });
+    await this.tokensRepository.delete({ user: user, device: this.getDevice(userAgent) });
 
     return { message: "로그아웃 성공" }
   }
@@ -88,18 +89,19 @@ export class AuthService {
     return accessToken;
   }
 
-  async generateRefreshToken(id: number): Promise<string> {
+  async generateRefreshToken(id: number, userAgent: string): Promise<string> {
     const payload = { id };
     const refreshToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_REFRESH_SECRET,
       expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
-    });
+    }); 
 
     const user = await this.userRepository.findOne({ where: { id } });
     const token = this.tokensRepository.create({
       user,
       refreshToken: await hash(refreshToken, 10),
-      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+      device: this.getDevice(userAgent)
     });
 
     await this.tokensRepository.save(token);
@@ -107,10 +109,14 @@ export class AuthService {
     return refreshToken;
   }
 
-  async generateTokens(id: number): Promise<LoginResponseDto> {
+  async generateTokens(id: number, userAgent: string): Promise<LoginResponseDto> {
     const accessToken = this.generateAccessToken(id);
-    const refreshToken = await this.generateRefreshToken(id);
+    const refreshToken = await this.generateRefreshToken(id, userAgent);
 
     return { id, accessToken, refreshToken };
+  }
+
+  getDevice(userAgent: string) {
+    return new UAParser(userAgent).getResult().device.model || 'Unknown device'
   }
 }

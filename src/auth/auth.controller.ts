@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -16,14 +16,16 @@ export class AuthController {
 
   @Post('register')
   @Docs('register')
-  async register(@Body() registerRequestDto: RegisterRequestDto) {
-    return await this.authService.register(registerRequestDto);
+  async register(@Body() registerRequestDto: RegisterRequestDto, @Req() req: Request) {
+    const userAgent = req.headers['user-agent'];
+    return await this.authService.register(registerRequestDto, userAgent);
   }
 
   @Post('login')
   @Docs('login')
-  async login(@Body() loginRequestDto: LoginRequestDto) {
-    return await this.authService.login(loginRequestDto);
+  async login(@Body() loginRequestDto: LoginRequestDto, @Req() req: Request) {
+    const userAgent = req.headers['user-agent'];
+    return await this.authService.login(loginRequestDto, userAgent);
   }
 
   @Get('kakao')
@@ -34,16 +36,19 @@ export class AuthController {
   @Get('kakao/callback')
   @UseGuards(AuthGuard('kakao'))
   @Docs('kakao/callback')
-  async kakaoLoginCallback(@User() user) {
-     return await this.authService.generateTokens(user.id);
+  async kakaoLoginCallback(@Req() req: any) {
+    const id = req.user.id;
+    const userAgent = req.headers['user-agent'];
+    return await this.authService.generateTokens(id, userAgent);
   }
 
   @Post('logout')
   @UseGuards(AuthGuard('jwt-refresh'))
   @Docs('logout')
-  async logout(@User() user) {
-    const id = user.id;
-    return await this.authService.logout(id);
+  async logout(@Req() req: any) {
+    const id = req.user.id;
+    const userAgent = req.headers['user-agent'];
+    return await this.authService.logout(id, userAgent);
   }
 
   @Post('refresh-token')

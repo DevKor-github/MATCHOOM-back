@@ -13,5 +13,8 @@ export class Tokens {
   refreshToken: string;
 
   @Column()
+  device: string;
+
+  @Column()
   expiresAt: Date;
 }
