@@ -25,10 +25,12 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
     const refreshToken = req.headers.authorization.split(' ')[1];
     if (!refreshToken) throw new UnauthorizedException("유효하지 않은 refresh token 입니다.");
 
-    const storedRefreshToken = await this.tokensRepository.findOne({ where: { user: { id: payload.id } } });
-    const refreshTokenCheck = await compare(refreshToken, storedRefreshToken.refreshToken);
-    if (!storedRefreshToken || !refreshTokenCheck) throw new UnauthorizedException("유효하지 않은 refresh token 입니다.");
-
-    return { id: payload.id };
+    const storedRefreshTokens = await this.tokensRepository.find({ where: { user: { id: payload.id } } });
+    if (!storedRefreshTokens) throw new UnauthorizedException("유효하지 않은 refresh token 입니다.");
+    for (const t of storedRefreshTokens) {
+      const refreshTokenCheck = await compare(refreshToken, t.refreshToken);
+      if (refreshTokenCheck) return { id: payload.id };
+    }
+    throw new UnauthorizedException("유효하지 않은 refresh token 입니다.");
   }
 }
